@@ -2,15 +2,39 @@
 #include <QCommandLineParser>
 #include <QImage>
 #include <QtCore>
+#include "mainwindow.h"
 
 #include <iostream>
 #include "utils/sceneparser.h"
 #include "raytracer/raytracer.h"
 #include "raytracer/raytracescene.h"
 
+#include <QApplication>
+#include <QScreen>
+#include <iostream>
+#include <QSettings>
+
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
+
+    QCoreApplication::setApplicationName("Spirit Sliders");
+    QCoreApplication::setOrganizationName("CS 1230");
+    QCoreApplication::setApplicationVersion(QT_VERSION_STR);
+
+    // QSurfaceFormat fmt;
+    // fmt.setVersion(4, 1);
+    // fmt.setProfile(QSurfaceFormat::CoreProfile);
+    // QSurfaceFormat::setDefaultFormat(fmt);
+
+    MainWindow w;
+    w.show();
+    return a.exec();
+
+    int return_val = a.exec();
+    return return_val;
+
+    // add back in later
 
     QCommandLineParser parser;
     parser.addHelpOption();

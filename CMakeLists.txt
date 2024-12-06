@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Specifies required Qt components
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Gui)
 find_package(Qt6 REQUIRED COMPONENTS Xml)
 
@@ -27,6 +28,10 @@ add_definitions(-DGLM_FORCE_SWIZZLE)
 # Specifies .cpp and .h files to be passed to the compiler
 add_executable(${PROJECT_NAME}
   src/main.cpp
+  src/mainwindow.cpp
+  src/mainwindow.h
+  src/settings.cpp
+  src/settings.h
   
   src/camera/camera.cpp
   src/raytracer/raytracer.cpp
@@ -52,6 +57,7 @@ add_executable(${PROJECT_NAME}
   src/utils/lightmodel.h src/utils/lightmodel.cpp
   src/raytracer/kdtree.h src/raytracer/kdtree.cpp
   src/utils/boundingbox.h
+  src/utils/aspectratiowidget/aspectratiowidget.hpp
 
 )
 
@@ -61,8 +67,10 @@ add_subdirectory(glm)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::Concurrent
     Qt::Core
+    Qt::Widgets
     Qt::Gui
     Qt::Xml
+
 )
 
 # Set this flag to silence warnings on Windows

@@ -68,8 +68,6 @@ KdTree::KdNode* KdTree::build(std::vector<Shape*>& shapes, const BoundingBox& pa
     return node;
 }
 
-
-
 std::vector<Shape*> KdTree::query(const glm::vec3& origin, const glm::vec3& direction, KdTree::KdNode* node) {
 
 
