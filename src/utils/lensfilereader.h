@@ -7,7 +7,7 @@ class LensFileReader {
 public:
     LensFileReader(const std::string &filename);
 
-    ~LensFileReader();
+    // ~LensFileReader();
 
     std::vector<LensInterface> getLensInterfaces();
 

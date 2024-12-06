@@ -95,7 +95,8 @@ bool SceneParser::parse(std::string sceneFilepath, std::string lensFilepath, Ren
 
     LensFileReader lensFileReader = LensFileReader(lensFilepath);
 
-    if (!lensFileReader.readLensFile()) {
+    bool lensSuccess = lensFileReader.readLensFile();
+    if (!lensSuccess) {
         return false;
     }
 

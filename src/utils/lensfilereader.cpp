@@ -3,7 +3,6 @@
 #include "scenedata.h"
 #include <ctype.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 LensFileReader::LensFileReader(const std::string &filename) {
     m_filename = filename;
@@ -64,6 +63,7 @@ bool LensFileReader::readLensFile() {
 
     if (lensData.size() % 4 != 0) {
         return false;
+
     }
 
     for (int i = 0; i < (int)lensData.size(); i += 4) {

@@ -15,10 +15,11 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addPositionalArgument("config", "Path of the config file.");
+    parser.addPositionalArgument("data", "Path of the lens .dat file.");
     parser.process(a);
 
     auto positionalArgs = parser.positionalArguments();
-    if (positionalArgs.size() != 1) {
+    if (positionalArgs.size() != 2) {
         std::cerr << "Not enough arguments. Please provide a path to a config file (.ini) as a command-line argument." << std::endl;
         a.exit(1);
         return 1;
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
     QString oImagePath = settings.value("IO/output").toString();
 
     RenderData metaData;
-    bool success = SceneParser::parse(iScenePath.toStdString(), metaData);
+    bool success = SceneParser::parse(iScenePath.toStdString(), positionalArgs[1].toStdString(), metaData);
 
     if (!success) {
         std::cerr << "Error loading scene: \"" << iScenePath.toStdString() << "\"" << std::endl;
