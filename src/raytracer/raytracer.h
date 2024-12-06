@@ -1,10 +1,20 @@
 #pragma once
 
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
+#include <glm/glm.hpp>
+
+#include "utils/sceneparser.h"
+#include "camera/camera.h"
+#include <QLabel>
+
 #include <glm/glm.hpp>
 #include "utils/rgba.h"
 #include "utils/shape.h"
 #include "raytracescene.h"
 #include "kdtree.h"
+
 
 // A forward declaration for the RaytraceScene class
 
@@ -12,7 +22,7 @@ class RayTraceScene;
 
 // A class representing a ray-tracer
 
-class RayTracer
+class RayTracer : public QWidget
 {
 public:
     struct Config {
