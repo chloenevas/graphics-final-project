@@ -26,7 +26,7 @@ bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDire
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayOrigin, 1.0f));
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
 
-    glm::vec3 movingCenter = m_center + glm::vec3(0.0f, 1 * time, 0.0f);
+    glm::vec3 movingCenter = m_center + glm::vec3(0.0f, static_cast<float>(0.5) * time, 0.0f);
     // Calculate the vector from the ray origin to the moving sphere's center
     P = P - movingCenter;
 

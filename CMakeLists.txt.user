@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 14.0.1, 2024-12-06T00:25:17. -->
+<!-- Written by QtCreator 14.0.1, 2024-12-06T00:44:05. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -240,7 +240,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.projects_ray</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">projects_ray</value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
-    <value type="QString" key="RunConfiguration.Arguments">/Users/chloenevas/Documents/cs1230/graphics-final-project/template_inis/final/unit_sphere.ini</value>
+    <value type="QString" key="RunConfiguration.Arguments">/Users/chloenevas/Documents/cs1230/graphics-final-project/template_inis/final/3spheres.ini</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
