@@ -43,7 +43,7 @@ public:
     RGBA superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
                              const Camera &camera, const glm::vec3 &eyePoint, int maxDepth);
 
-    RGBA traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
+    RGBA traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time);
 
     float calculateColorVariance(RGBA samples[4]);
 

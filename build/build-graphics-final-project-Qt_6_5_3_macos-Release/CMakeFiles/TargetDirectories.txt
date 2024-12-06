@@ -1,0 +1,15 @@
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/projects_ray.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/edit_cache.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/rebuild_cache.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/list_install_components.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/install.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/install/local.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/install/strip.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/projects_ray_autogen_timestamp_deps.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/CMakeFiles/projects_ray_autogen.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/edit_cache.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/rebuild_cache.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/list_install_components.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/install.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/install/local.dir
+/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/glm/CMakeFiles/install/strip.dir

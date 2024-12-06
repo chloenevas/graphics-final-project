@@ -1,0 +1,159 @@
+{
+  
+  "name": "default",
+  "globalData": {
+      "ambientCoeff": 0.5,
+      "diffuseCoeff": 0.5,
+      "specularCoeff": 0.5,
+      "transparentCoeff": 0
+  },
+  "cameraData": {
+    "position": [3.0, 3.0, 3.0],
+    "up": [0.0, 1.0, 0.0],
+    "heightAngle": 30.0,
+    "focus": [0.0, 0.0, 0.0]
+  },
+  "groups": [
+    {
+      
+      "name": "Spheres",
+      "translate": [
+        0,
+        0,
+        0
+      ],
+      "rotate": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "primitives": [
+        {
+          "type": "sphere",
+          "diffuse": [
+            0.3,
+            0.4,
+            1
+          ],
+          "specular": [
+            1,
+            1,
+            1
+          ],
+          "ambient": [
+            0.3,
+            0,
+            0.9
+          ],
+          "shininess": 1}
+      ],
+      "groups": [
+        {
+          
+          "translate": [
+            -2,
+            0,
+            0
+          ],
+          "rotate": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                1,
+                1,
+                1
+              ],
+              "specular": [
+                1,
+                1,
+                1
+              ],
+              "ambient": [
+                0.1,
+                0.7,
+                0.3
+              ],
+              "shininess": 25}
+          ]
+        },
+        {
+          
+          "translate": [
+            2,
+            0,
+            0
+          ],
+          "rotate": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                0.9,
+                0,
+                0.6
+              ],
+              "specular": [
+                1,
+                1,
+                1
+              ],
+              "ambient": [
+                0.8,
+                0.3,
+                0.2
+              ],
+              "shininess": 1}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lights",
+      "lights": [
+        {
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "type": "point",
+          "attenuationCoeff": [
+            0,
+            0,
+            0
+          ]}
+      ],
+      "translate": [
+        1,
+        1,
+        2
+      ]}
+  ]
+}

@@ -10,6 +10,7 @@
 #include "utils/imagereader.h"
 #include <iostream>
 
+
 RayTracer::RayTracer(Config config) :
     m_config(config)
 {}
@@ -133,11 +134,17 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
     // arbitrary threshold value, can change
     float threshold = 0.1;
 
+    float step = 1.0f / 4; // For 4 samples
+    float time1 = (0 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
+    float time2 = (1 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
+    float time3 = (2 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
+    float time4 = (3 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
+
     RGBA samples[4] = {
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, eyePoint, d, 0)
+        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0, time1),
+        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, eyePoint, d, 0, time2),
+        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, eyePoint, d, 0, time3),
+        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, eyePoint, d, 0, time4)
     };
 
     float variance = calculateColorVariance(samples);
@@ -158,7 +165,7 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
 
 
 RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root,
-                        const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
+                        const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time) {
 
     float closestT = std::numeric_limits<float>::max();
     glm::vec3 closestIntersection;
@@ -170,7 +177,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         float t;
         glm::vec3 intersectionPoint;
 
-        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t)) {
+        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time)) {
             float worldT = glm::length(intersectionPoint - eyePoint);
 
             if (worldT < closestT) {
@@ -209,7 +216,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
                 float shadowT;
                 glm::vec3 shadowIntersection;
 
-                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT)) {
+                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, time)) {
                     float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
 
                     if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
@@ -230,7 +237,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         if (reflectivity.r > 0.0f || reflectivity.g > 0.0f || reflectivity.b > 0.0f) {
             if (currentDepth < 4){
             glm::vec3 reflectionDir = glm::reflect(d, normal);
-            RGBA reflectionColor = traceRay(r, c, scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
+            RGBA reflectionColor = traceRay(r, c, scene, root, offsetIntersection, reflectionDir, currentDepth + 1, time);
 
             illumination += glm::vec4(
                 scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
@@ -261,7 +268,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
             }
 
             glm::vec3 refOffset = closestIntersection + epsilon * T;
-            RGBA refractionColor = traceRay(r, c, scene, root, refOffset, T, currentDepth + 1);
+            RGBA refractionColor = traceRay(r, c, scene, root, refOffset, T, currentDepth + 1, time);
 
             illumination.r = glm::mix(illumination.r, refractionColor.r / 255.0f, transparency.r * scene.getGlobalData().kt);
             illumination.g = glm::mix(illumination.g, refractionColor.g / 255.0f, transparency.g * scene.getGlobalData().kt);

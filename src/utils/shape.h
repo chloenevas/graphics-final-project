@@ -33,7 +33,7 @@ public:
 
     virtual glm::vec3 calcNormal(const glm::vec3 point) = 0;
 
-    virtual bool calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float &t) = 0;
+    virtual bool calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float &t, float time) = 0;
 
     virtual BoundingBox getBoundingBox() = 0;
 
