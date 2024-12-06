@@ -52,6 +52,8 @@ add_executable(${PROJECT_NAME}
   src/utils/lightmodel.h src/utils/lightmodel.cpp
   src/raytracer/kdtree.h src/raytracer/kdtree.cpp
   src/utils/boundingbox.h
+  src/utils/lensfilereader.h src/utils/lensfilereader.cpp
+
 
 )
 

@@ -10,7 +10,8 @@ Camera::Camera(int width, int height, const RenderData &metaData)
     m_heightAngle(metaData.cameraData.heightAngle),
     m_widthAngle(m_heightAngle*m_aspectRatio),
     m_focalLength(1.0f),
-    m_aperture(metaData.cameraData.aperture) {}
+    m_aperture(metaData.cameraData.aperture),
+    m_lensInterfaces(metaData.lensInterfaces){}
 
 glm::mat4 Camera::calcViewMatrix(glm::vec3 pos, glm::vec3 look, glm::vec3 up) {
     glm::vec3 w = glm::normalize(-look);
@@ -65,3 +66,16 @@ float Camera::getFocalLength() const {
 float Camera::getAperture() const {
     return m_aperture;
 }
+
+std::vector<LensInterface> Camera::getLensInterfaces() const {
+    return m_lensInterfaces;
+}
+
+float Camera::getLensThicknesses() const {
+    float thicknesses = 0.0f;
+    for (const LensInterface &lens: m_lensInterfaces) {
+        thicknesses += lens.thickness;
+    }
+    return thicknesses;
+}
+

@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "utils/sceneparser.h"
+#include "utils/scenedata.h"
 
 // A class representing a virtual camera.
 
@@ -18,6 +19,7 @@ private:
     float m_widthAngle;
     float m_focalLength;      // Stores the focal length for depth of field (optional)
     float m_aperture;
+    std::vector<LensInterface> m_lensInterfaces;
 
 public:
     Camera(int width, int height, const RenderData &metaData);
@@ -47,4 +49,8 @@ public:
     // This is for the depth of field extra-credit feature only;
     // You can ignore if you are not attempting to implement depth of field.
     float getAperture() const;
+
+    std::vector<LensInterface> getLensInterfaces() const;
+
+    float getLensThicknesses() const;
 };

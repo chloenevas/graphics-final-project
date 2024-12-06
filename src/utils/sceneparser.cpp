@@ -1,6 +1,7 @@
 #include "sceneparser.h"
 #include "scenefilereader.h"
 #include <glm/gtx/transform.hpp>
+#include "lensfilereader.h"
 
 void traverseSceneGraph(SceneNode* node, glm::mat4 parentCTM, std::vector<RenderShapeData> &shapes, std::vector<SceneLightData> &lights) {
     glm::mat4 currentCTM = parentCTM;
@@ -76,20 +77,29 @@ void traverseSceneGraph(SceneNode* node, glm::mat4 parentCTM, std::vector<Render
     }
 }
 
-bool SceneParser::parse(std::string filepath, RenderData &renderData) {
-    ScenefileReader fileReader = ScenefileReader(filepath);
-    bool success = fileReader.readJSON();
+bool SceneParser::parse(std::string sceneFilepath, std::string lensFilepath, RenderData &renderData) {
+    ScenefileReader sceneFileReader = ScenefileReader(sceneFilepath);
+    bool success = sceneFileReader.readJSON();
     if (!success) {
         return false;
     }
 
-    renderData.globalData = fileReader.getGlobalData();
-    renderData.cameraData = fileReader.getCameraData();
+    renderData.globalData = sceneFileReader.getGlobalData();
+    renderData.cameraData = sceneFileReader.getCameraData();
     renderData.shapes.clear();
 
-    SceneNode* rootNode = fileReader.getRootNode();
+    SceneNode* rootNode = sceneFileReader.getRootNode();
 
     glm::mat4 identityMatrix = glm::mat4(1.0f);
     traverseSceneGraph(rootNode, identityMatrix, renderData.shapes, renderData.lights);
+
+    LensFileReader lensFileReader = LensFileReader(lensFilepath);
+
+    if (!lensFileReader.readLensFile()) {
+        return false;
+    }
+
+    renderData.lensInterfaces = lensFileReader.getLensInterfaces();
+
     return true;
 }

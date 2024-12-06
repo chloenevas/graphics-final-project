@@ -3,6 +3,7 @@
 #include "scenedata.h"
 #include <vector>
 #include <string>
+#include "scenedata.h"
 
 // Struct which contains data for a single primitive, to be used for rendering
 struct RenderShapeData {
@@ -17,6 +18,8 @@ struct RenderData {
 
     std::vector<SceneLightData> lights;
     std::vector<RenderShapeData> shapes;
+
+    std::vector<LensInterface> lensInterfaces;
 };
 
 class SceneParser {
@@ -25,5 +28,5 @@ public:
     // @param filepath    The path of the scene file to load.
     // @param renderData  On return, this will contain the metadata of the loaded scene.
     // @return            A boolean value indicating whether the parse was successful.
-    static bool parse(std::string filepath, RenderData &renderData);
+    static bool parse(std::string sceneFilepath, std::string lensFilepath, RenderData &renderData);
 };
