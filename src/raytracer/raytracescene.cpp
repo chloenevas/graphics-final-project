@@ -2,7 +2,7 @@
 
 RayTraceScene::RayTraceScene(int width, int height, const RenderData &metaData)
     : m_width(width), m_height(height), m_globalData(metaData.globalData), m_camera(width, height, metaData),
-    shapes(metaData.shapes), lights(metaData.lights) {}
+    shapes(metaData.shapes), lights(metaData.lights), lensInterfaces(metaData.lensInterfaces) {}
 
 // Getter for width
 const int& RayTraceScene::width() const {
@@ -46,4 +46,8 @@ const glm::vec3 RayTraceScene::getPoint(float r, float c, const Camera& camera) 
     float z = -camera.getFocalLength();
 
     return glm::vec3(x, y, z);
+}
+
+const std::vector<LensInterface>& RayTraceScene::getLensInterfaces() const {
+    return lensInterfaces;
 }

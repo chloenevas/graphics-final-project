@@ -49,6 +49,10 @@ public:
 
     RGBA averageColor(RGBA samples[4]);
 
+    bool traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d, glm::vec3 *eyePointOut, glm::vec3 *dOut, std::vector<LensInterface> lenses, bool debug);
+
+    bool refract(glm::vec3 d, glm::vec3 p, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD, glm::vec3 *outputP, glm::vec3 intersectionPoint);
+
 private:
     const Config m_config;
     KdTree kdTree;
