@@ -29,9 +29,9 @@ if [ -z "$BUILD_PROJECT_DIR" ]; then
 fi
 
 EXECUTABLE_PATH="$BUILD_PROJECT_DIR/projects_ray"
-INI_FILE="template_inis/intersect/unit_cylinder.ini"
+INI_FILE="inifile/primsalad/scene_1.ini"
 
-for INI_FILE in template_inis/intersect/*.ini; do
+for INI_FILE in inifiles/primsalad/*.ini; do
   if [ -x "$EXECUTABLE_PATH" ] || [ -f "$EXECUTABLE_PATH.exe" ]; then
     echo "Running $EXECUTABLE_PATH with $INI_FILE"
     if [ -x "$EXECUTABLE_PATH" ]; then
