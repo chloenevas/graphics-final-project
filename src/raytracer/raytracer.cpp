@@ -99,7 +99,7 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
     glm::vec3 dLens;
     if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces(), debug)) {
         // std::cout << "cannot trace lens ray" << std::endl;
-        return RGBA{255, 0, 0, 255};
+        return RGBA{0, 0, 0, 255};
     } else {
         // std::cout << ":)" << std::endl;
     }
@@ -107,8 +107,8 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
     // now, use ray through lens
 
     d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
-    glm::vec3 p = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f)); // i feel that this is wrong
-        // check that eyepointlens is not a big vector- should be close to 0 (milimeters away)
+    glm::vec3 p = camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f);
+        // check that eyepointlens is not a big vector- should be close to 0 (millimeters away)
 
 
     RGBA samples[4] = {
@@ -293,11 +293,11 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             float center = z + r;
             glm::mat4 translation = glm::mat4(1.0f); // try using glm translare and scale
             translation[3][2] = center;
-            float scalingFactor = abs(r/0.5f);
+            float scalingFactor = (r/0.5f);
             translation[0][0] =  scalingFactor;
             translation[1][1] =  scalingFactor;
             translation[2][2] =  scalingFactor;
-            Sphere sphere = Sphere(translation, SceneMaterial{}, nullptr);            // get radius and center in there
+            Sphere sphere = Sphere(translation, SceneMaterial{}, nullptr);
             sphere.setIsLens(true);
             sphere.setRadius(r);
             if (!sphere.calcIntersection(eyePointLens, dLens, intersectionPoint, t)) {
@@ -343,27 +343,6 @@ bool RayTracer::refract(glm::vec3 d, glm::vec3 p, glm::vec3 normal, float n1, fl
     }
     float cos2 = std::sqrt(1.0f - sin2);
     *outputD = eta * -d + (eta * cos1 - cos2) * normal;
-
-    // const float epsilon = 1e-2f;
-
-
-    // // float eta = entering ? n1 / n2 : n2 / n1;
-    // glm::vec3 refNorm = entering ? normal : -normal;
-
-
-    // float k = 1.0f - eta * eta * (1.0f - cosTheta1 * cosTheta1);
-
-    // glm::vec3 T;
-    // if (k < 0.0f) {
-    //     T = d - 2.0f * glm::dot(d, refNorm) * refNorm;
-    // } else {
-    //     float cosTheta2 = std::sqrt(k);
-    //     T = (eta * d) + (((eta * cosTheta1) - cosTheta2) * refNorm);
-    // }
-
-    // glm::vec3 refOffset = intersectionPoint + epsilon * T;
-    // *outputD = T;
-    // *outputP = refOffset;
     return true;
 }
 
