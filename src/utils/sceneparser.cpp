@@ -77,7 +77,7 @@ void traverseSceneGraph(SceneNode* node, glm::mat4 parentCTM, std::vector<Render
     }
 }
 
-bool SceneParser::parse(std::string sceneFilepath, std::string lensFilepath, RenderData &renderData) {
+bool SceneParser::parseScene(std::string sceneFilepath, RenderData &renderData) {
     ScenefileReader sceneFileReader = ScenefileReader(sceneFilepath);
     bool success = sceneFileReader.readJSON();
     if (!success) {
@@ -93,6 +93,10 @@ bool SceneParser::parse(std::string sceneFilepath, std::string lensFilepath, Ren
     glm::mat4 identityMatrix = glm::mat4(1.0f);
     traverseSceneGraph(rootNode, identityMatrix, renderData.shapes, renderData.lights);
 
+    return true;
+}
+
+bool SceneParser::parseLens(std::string lensFilepath, RenderData &renderData) {
     LensFileReader lensFileReader = LensFileReader(lensFilepath);
 
     bool lensSuccess = lensFileReader.readLensFile();

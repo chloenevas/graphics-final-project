@@ -68,57 +68,69 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
     BoundingBox parentBox(glm::vec3(-20.0f, -20.0f, -20.0f), glm::vec3(20.0f, 20.0f, 20.0f));
     KdTree::KdNode* root = kdTree.build(shapes, parentBox);
 
+    bool lens = (scene.getLensInterfaces().size() != 0);
+
     // arbitrary depth value, can change
     int maxDepth = 3;
 
     for (int r = 0; r < scene.height(); r ++) {
         for (int c = 0; c < scene.width(); c ++) {
-            imageData[r * scene.width() + c] = superSamp(r, c, 1.0f, scene, root, camera, eyePoint, maxDepth);
+            imageData[r * scene.width() + c] = superSamp(r, c, 1.0f, scene, root, camera, eyePoint, maxDepth, lens);
         }
     }
 }
 
 RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                                    const Camera &camera, const glm::vec3 &eyePoint, int maxDepth) {
-    float halfPixel = pixelSize / 2.0f;
+                                    const Camera &camera, const glm::vec3 &eyePoint, int maxDepth, bool lens) {
 
-    // glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+    glm::vec3 d, p;
 
-    glm::vec3 d = glm::normalize(scene.getPoint(r, c, camera));
-    bool debug;
+    if (lens) {
+        d = glm::normalize(scene.getPoint(r, c, camera));
+        bool debug = false;
 
-    if (r == 350 && c == 500) {
-        debug = true;
-    }
+        if (r == 384 && c == 513) {
+            debug = true;
+        }
 
-    // arbitrary threshold value, can change
-    float threshold = 0.1;
+        glm::vec3 eyePointLens;
+        glm::vec3 dLens;
+        if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces(), debug)) {
+            return RGBA{0, 0, 0, 255};
+        }
 
-    // ray through lens:
-    glm::vec3 eyePointLens;
-    glm::vec3 dLens;
-    if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces(), debug)) {
-        // std::cout << "cannot trace lens ray" << std::endl;
-        return RGBA{0, 0, 0, 255};
+        d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
+        p = camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f);
     } else {
-        // std::cout << ":)" << std::endl;
+        d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+        p = eyePoint;
+
     }
 
-    // now, use ray through lens
+    // float threshold = 0.1;
+    // float halfPixel = pixelSize / 2.0f;
 
-    d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
-    glm::vec3 p = camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f);
-        // check that eyepointlens is not a big vector- should be close to 0 (millimeters away)
+    // RGBA samples[4] = {
+    //     traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
+    //     traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
+    //     traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, eyePoint, d, 0),
+    //     traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, eyePoint, d, 0)
+    // };
 
+    // float variance = calculateColorVariance(samples);
 
-    RGBA samples[4] = {
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, p, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, p, d, 0),
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, p, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, p, d, 0)
-    };
+    // if (variance < threshold || maxDepth == 0) {
+    //     return averageColor(samples);
+    // }
 
-    return averageColor(samples);
+    // RGBA subSamples[4] = {
+    //     superSamp(r, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
+    //     superSamp(r + halfPixel, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
+    //     superSamp(r, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
+    //     superSamp(r + halfPixel, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens)
+    // };
+
+    return traceRay(r, c, scene, root, p, d, 0);
 }
 
 
@@ -276,8 +288,8 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
     glm::vec3 eyePointLens = scaleMatrix * eyePoint;
     float z = 0.0f;
     for (int i = lenses.size() - 1; i >= 0; i--) {
-        if (debug && i == 7) {
-            auto egreg = 0;
+        if (debug && i ==0) {
+            auto hello = 0;
         }
         LensInterface lens = lenses[i];
         z -= lens.thickness;
@@ -291,7 +303,7 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
         } else {
             float r = lens.radius;
             float center = z + r;
-            glm::mat4 translation = glm::mat4(1.0f); // try using glm translare and scale
+            glm::mat4 translation = glm::mat4(1.0f);
             translation[3][2] = center;
             float scalingFactor = (r/0.5f);
             translation[0][0] =  scalingFactor;
@@ -300,7 +312,7 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             Sphere sphere = Sphere(translation, SceneMaterial{}, nullptr);
             sphere.setIsLens(true);
             sphere.setRadius(r);
-            if (!sphere.calcIntersection(eyePointLens, dLens, intersectionPoint, t)) {
+            if (!sphere.calcIntersection(eyePointLens, glm::normalize(dLens), intersectionPoint, t)) {
                 return false;
             } else {
                 n = sphere.calcNormal(intersectionPoint);
@@ -316,13 +328,10 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             float nStart = lens.n;
             float nEnd = (i > 0 && lenses[i - 1].n != 0) ? lenses[i - 1].n : 1.0f;
             glm::vec3 outputD;
-            glm::vec3 outputP;
-            if (!refract(glm::normalize(-dLens), eyePointLens, n, nStart, nEnd, &outputD, &outputP, intersectionPoint)) {
+            if (!refract(glm::normalize(dLens), n, nStart, nEnd, &outputD)) {
                 return false;
             }
-            const float epsilon = 1e-2f;
-            dLens = outputD;
-            eyePointLens -= dLens * epsilon;
+            dLens = glm::normalize(outputD);
         }
     }
 
@@ -331,18 +340,35 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
     return true;
 }
 
-bool RayTracer::refract(glm::vec3 d, glm::vec3 p, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD, glm::vec3 *outputP, glm::vec3 intersectionPoint) {
-    float eta = n1/n2;
-    float cos1 = glm::dot(d, normal);
+bool RayTracer::refract(glm::vec3 d, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD) {
+    // float eta = n1/n2;
+    // float cos1 = glm::dot(d, normal);
     // bool entering = cos1 < 0.0f;
     // cos1 = entering ? -cos1 : cos1;
-    float sin1 = std::max(0.0f, 1.0f - cos1 * cos1);
-    float sin2 = eta * eta * sin1;
-    if (sin2 >= 1.0f) {
-        return false;
+    // float sin1 = std::max(0.0f, 1.0f - cos1 * cos1);
+    // float sin2 = eta * eta * sin1;
+    // if (sin2 >= 1.0f) {
+    //     return false;
+    // }
+    // float cos2 = std::sqrt(1.0f - sin2);
+    // *outputD = eta * -d + (eta * cos1 - cos2) * normal;
+
+    float cosTheta1 = glm::dot(d, normal);
+    bool entering = cosTheta1 < 0.0f;
+    cosTheta1 = entering ? -cosTheta1 : cosTheta1;
+    float eta = n1/n2;
+    glm::vec3 refNorm = entering ? normal : normal;
+
+    float k = 1.0f - eta * eta * (1.0f - cosTheta1 * cosTheta1);
+
+    glm::vec3 T;
+    if (k < 0.0f) {
+        T = d - 2.0f * glm::dot(d, refNorm) * refNorm;
+    } else {
+        float cosTheta2 = std::sqrt(k);
+        T = (eta * d) + (((eta * cosTheta1) - cosTheta2) * refNorm);
     }
-    float cos2 = std::sqrt(1.0f - sin2);
-    *outputD = eta * -d + (eta * cos1 - cos2) * normal;
+    *outputD = T;
     return true;
 }
 

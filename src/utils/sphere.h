@@ -20,8 +20,6 @@ public:
 
     void id() override;
 
-    void setCenter(glm::vec3 center);
-
     void setRadius(float r);
 
     void setIsLens(bool isLens);

@@ -41,7 +41,7 @@ public:
     void render(RGBA *imageData, const RayTraceScene &scene);
 
     RGBA superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                             const Camera &camera, const glm::vec3 &eyePoint, int maxDepth);
+                             const Camera &camera, const glm::vec3 &eyePoint, int maxDepth, bool lens);
 
     RGBA traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
 
@@ -51,7 +51,7 @@ public:
 
     bool traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d, glm::vec3 *eyePointOut, glm::vec3 *dOut, std::vector<LensInterface> lenses, bool debug);
 
-    bool refract(glm::vec3 d, glm::vec3 p, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD, glm::vec3 *outputP, glm::vec3 intersectionPoint);
+    bool refract(glm::vec3 d, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD);
 
 private:
     const Config m_config;

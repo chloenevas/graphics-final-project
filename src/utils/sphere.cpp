@@ -14,13 +14,10 @@ glm::vec3 Sphere::calcNormal(const glm::vec3 point) {
     // Calculate normal in object space
     glm::vec3 objectSpaceNormal = glm::normalize(objectSpacePoint);
 
-    float lensFactor = 1.0f;
-    if (m_isLens && m_radius > 0) {
-        lensFactor = -1.0f;
-    }
+    glm::vec3 n = glm::normalize(glm::vec3(glm::transpose(m_inverseCTM) * glm::vec4(objectSpaceNormal, 0.0f)));
 
     // Transform normal back to world space using the transpose of the inverse of CTM
-    return lensFactor * glm::normalize(glm::vec3(glm::transpose(m_inverseCTM) * glm::vec4(objectSpaceNormal, 0.0f)));
+    return n;
 }
 
 // Method to calculate the intersection with a ray
@@ -98,10 +95,6 @@ glm::vec3 Sphere::getTexture(const glm::vec3& intersection) {
 
     RGBA pixel = m_image->data[y * m_image->width + x];
     return glm::vec3(pixel.r / 255.0f, pixel.g / 255.0f, pixel.b / 255.0f);
-}
-
-void Sphere::setCenter(glm::vec3 center) {
-    m_center = center;
 }
 
 void Sphere::setRadius(float r) {

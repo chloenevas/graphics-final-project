@@ -15,11 +15,10 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addPositionalArgument("config", "Path of the config file.");
-    parser.addPositionalArgument("data", "Path of the lens .dat file.");
     parser.process(a);
 
     auto positionalArgs = parser.positionalArguments();
-    if (positionalArgs.size() != 2) {
+    if (positionalArgs.size() != 1) {
         std::cerr << "Not enough arguments. Please provide a path to a config file (.ini) as a command-line argument." << std::endl;
         a.exit(1);
         return 1;
@@ -28,14 +27,25 @@ int main(int argc, char *argv[])
     QSettings settings( positionalArgs[0], QSettings::IniFormat );
     QString iScenePath = settings.value("IO/scene").toString();
     QString oImagePath = settings.value("IO/output").toString();
+    QString lFilePath = settings.value("IO/lens").toString();
 
     RenderData metaData;
-    bool success = SceneParser::parse(iScenePath.toStdString(), positionalArgs[1].toStdString(), metaData);
+    bool sceneSuccess = SceneParser::parseScene(iScenePath.toStdString(), metaData);
 
-    if (!success) {
+    if (!sceneSuccess) {
         std::cerr << "Error loading scene: \"" << iScenePath.toStdString() << "\"" << std::endl;
         a.exit(1);
         return 1;
+    }
+
+    if (!lFilePath.isEmpty()) {
+        bool lensSuccess = SceneParser::parseLens(lFilePath.toStdString(), metaData);
+
+        if (!lensSuccess) {
+            std::cerr << "Error loading lens: \"" << lFilePath.toStdString() << "\"" << std::endl;
+            a.exit(1);
+            return 1;
+        }
     }
 
     // Raytracing-relevant code starts here
@@ -71,7 +81,7 @@ int main(int argc, char *argv[])
     raytracer.render(data, rtScene);
 
     // Saving the image
-    success = image.save(oImagePath);
+    bool success = image.save(oImagePath);
     if (!success) {
         success = image.save(oImagePath, "PNG");
     }
