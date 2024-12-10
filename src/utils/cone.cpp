@@ -1,8 +1,8 @@
 #include "cone.h"
 #include <iostream>
 
-Cone::Cone(const glm::mat4& ctm, const SceneMaterial& material, const Image* image)
-    : Shape(ctm, material, image), m_center(glm::vec3(0,0,0)), m_height(1.0f), m_radius(0.5f) {
+Cone::Cone(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
+    : Shape(ctm, material, velocity, image), m_center(glm::vec3(0,0,0)), m_height(1.0f), m_radius(0.5f) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
@@ -23,9 +23,13 @@ glm::vec3 Cone::calcNormal(const glm::vec3 point) {
 
 
 // Method to calculate the intersection with a ray
-bool Cone::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t) {
+bool Cone::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t, float time) {
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayOrigin, 1.0f));
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
+
+    // calculate vector from ray origin to moving sphere's center
+    glm::vec3 movingCenter = m_center + time * m_velocity;
+    P = P - movingCenter;
 
     float k = (m_radius * m_radius) / (m_height * m_height);
 

@@ -40,4 +40,3 @@ public:
 
     const glm::vec3 getPoint(float i, float j, const Camera& camera) const;
 };
-

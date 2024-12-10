@@ -31,6 +31,8 @@ std::vector<Shape*> RayTracer::makeShapes(const std::vector<RenderShapeData>& sh
     for (const auto& object : shapeData) {
         const glm::mat4& ctm = object.ctm;
         const SceneMaterial& material = object.primitive.material;
+        const glm::vec3 velocity = object.primitive.velocity;
+
         Image* image;
         if (material.textureMap.isUsed){
             image = loadImageFromFile(material.textureMap.filename);
@@ -41,16 +43,16 @@ std::vector<Shape*> RayTracer::makeShapes(const std::vector<RenderShapeData>& sh
 
         switch (object.primitive.type) {
         case PrimitiveType::PRIMITIVE_SPHERE:
-            shapes.push_back(new Sphere(ctm, material, image));
+            shapes.push_back(new Sphere(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CUBE:
-            shapes.push_back(new Cube(ctm, material, image));
+            shapes.push_back(new Cube(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CONE:
-            shapes.push_back(new Cone(ctm, material, image));
+            shapes.push_back(new Cone(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CYLINDER:
-            shapes.push_back(new Cylinder(ctm, material, image));
+            shapes.push_back(new Cylinder(ctm, material, velocity, image));
             break;
         default:
             break;
@@ -80,7 +82,6 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
         for (int c = 0; c < imageWidth; c ++) {
             glm::vec4 color(0,0,0,255);
             if (m_config.enableDepthOfField) {
-
                 // Number of samples per pixel
                 int samples = 6;  // Increased for better quality
 
@@ -121,14 +122,35 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                     glm::vec3 rayOrigin = cameraPos + offset;
                     glm::vec3 finalRayDirection = glm::normalize(focalPoint - rayOrigin);
 
-                    color += traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth);
+                    // dummy unused value for time
+                    color += traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth, 0);
                 }
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
-            } else {
+            } else if (m_config.enableMotionBlur) {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+                int samples = 20;
+                for (int s = 0; s < samples; ++s) {
+
+                    // get a randopm time within the shutter open and close - start at t = 0 end at t = 1
+                    float time = (s + static_cast<float>(rand()) / RAND_MAX) / samples;
+
+                    color += traceRay(scene, root, eyePoint, d, maxDepth, time);
+                }
+                color /= static_cast<float>(samples);
+
+                color = glm::clamp(color, 0.0f, 1.0f);
+            }
+            else {
+
+                glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
+                                                 glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+
+                // dummy unused value for time
+                color = traceRay(scene, root, eyePoint, d, maxDepth, 0);
+
             }
             RGBA finalColor;
             finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);
@@ -142,7 +164,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
     }
 }
 
-glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
+glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time) {
 
     const Camera& camera = scene.getCamera();
 
@@ -156,7 +178,8 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         float t;
         glm::vec3 intersectionPoint;
 
-        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t)) {
+
+        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time)) {
             float worldT = glm::length(intersectionPoint - eyePoint);
 
             if (worldT < closestT) {
@@ -171,6 +194,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         glm::vec3 normal = closestShape->calcNormal(closestIntersection);
         const float epsilon = 1e-2f;
         glm::vec3 offsetIntersection = closestIntersection + epsilon * normal;
+
         glm::vec3 directionToCamera = glm::normalize(-d);
 
         glm::vec3 ambient = scene.getGlobalData().ka * closestShape->getMaterial().cAmbient;
@@ -193,7 +217,8 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                 float shadowT;
                 glm::vec3 shadowIntersection;
 
-                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT)) {
+                // calculate shadows based on the shape's position at time = 0
+                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
                     float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
 
                     if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
@@ -214,7 +239,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         if (reflectivity.r > 0.0f || reflectivity.g > 0.0f || reflectivity.b > 0.0f) {
             if (currentDepth < 4){
                 glm::vec3 reflectionDir = glm::reflect(d, normal);
-                glm::vec4 reflectionColor = traceRay(scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
+                glm::vec4 reflectionColor = traceRay(scene, root, offsetIntersection, reflectionDir, currentDepth + 1, time);
 
                 illumination += glm::vec4(
                     scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
@@ -245,7 +270,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
             }
 
             glm::vec3 refOffset = closestIntersection + epsilon * T;
-            glm::vec4 refractionColor = traceRay(scene, root, refOffset, T, currentDepth + 1);
+            glm::vec4 refractionColor = traceRay(scene, root, refOffset, T, currentDepth + 1, time);
 
             illumination.r = glm::mix(illumination.r, refractionColor.r / 255.0f, transparency.r * scene.getGlobalData().kt);
             illumination.g = glm::mix(illumination.g, refractionColor.g / 255.0f, transparency.g * scene.getGlobalData().kt);

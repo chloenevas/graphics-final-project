@@ -3,8 +3,8 @@
 #include <iostream>
 
 // Constructor that takes the CTM (Cumulative Transformation Matrix)
-Cylinder::Cylinder(const glm::mat4& ctm, const SceneMaterial& material, const Image* image)
-    : Shape(ctm, material, image), m_center(glm::vec3(0,0,0)), m_height(1.0f), m_radius(0.5f) {
+Cylinder::Cylinder(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
+    : Shape(ctm, material, velocity, image), m_center(glm::vec3(0,0,0)), m_height(1.0f), m_radius(0.5f) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
@@ -25,10 +25,13 @@ glm::vec3 Cylinder::calcNormal(const glm::vec3 point) {
 }
 
 
-bool Cylinder::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float &t) {
+bool Cylinder::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float &t, float time) {
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayOrigin, 1.0f));
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
 
+    // calculate vector from ray origin to moving sphere's center
+    glm::vec3 movingCenter = m_center + time * m_velocity;
+    P = P - movingCenter;
     float a = d.x * d.x + d.z * d.z;
     float b = 2 * (P.x * d.x + P.z * d.z);
     float c = P.x * P.x + P.z * P.z - m_radius * m_radius;

@@ -13,9 +13,9 @@
 
 #define ERROR_AT(e) "error at line " << e.lineNumber() << " col " << e.columnNumber() << ": "
 #define PARSE_ERROR(e) std::cout << ERROR_AT(e) << "could not parse <" << e.tagName().toStdString() \
-                                 << ">" << std::endl
+<< ">" << std::endl
 #define UNSUPPORTED_ELEMENT(e) std::cout << ERROR_AT(e) << "unsupported element <" \
-                                         << e.tagName().toStdString() << ">" << std::endl;
+       << e.tagName().toStdString() << ">" << std::endl;
 
 // Students, please ignore this file.
 ScenefileReader::ScenefileReader(const std::string &name) {
@@ -803,8 +803,8 @@ bool ScenefileReader::parseGroups(const QJsonValue &groups, SceneNode *parent) {
 bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
     QStringList requiredFields = {"type"};
     QStringList optionalFields = {
-        "meshFile", "ambient", "diffuse", "specular", "reflective", "transparent", "shininess", "ior",
-        "blend", "textureFile", "textureU", "textureV", "bumpMapFile", "bumpMapU", "bumpMapV"};
+                                  "meshFile", "ambient", "diffuse", "specular", "reflective", "transparent", "shininess", "ior",
+                                  "blend", "textureFile", "textureU", "textureV", "bumpMapFile", "bumpMapU", "bumpMapV", "velocity"};
 
     QStringList allFields = requiredFields + optionalFields;
     for (auto field : prim.keys()) {
@@ -835,6 +835,7 @@ bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
     mat.bumpMap.isUsed = false;
     mat.cDiffuse.r = mat.cDiffuse.g = mat.cDiffuse.b = 1;
     node->primitives.push_back(primitive);
+    primitive->velocity = {0, 0, 0}; // velocity defaults at 0 if it's not set otherwise
 
     std::filesystem::path basepath = std::filesystem::path(file_name).parent_path().parent_path();
     if (primType == "sphere")
@@ -1020,6 +1021,27 @@ bool ScenefileReader::parsePrimitive(const QJsonObject &prim, SceneNode *node) {
         mat.bumpMap.repeatU = prim.contains("bumpMapU") && prim["bumpMapU"].isDouble() ? prim["bumpMapU"].toDouble() : 1;
         mat.bumpMap.repeatV = prim.contains("bumpMapV") && prim["bumpMapV"].isDouble() ? prim["bumpMapV"].toDouble() : 1;
         mat.bumpMap.isUsed = true;
+    }
+
+    if (prim.contains("velocity")) {
+        if (!prim["velocity"].isArray()) {
+            std::cout << "primitive velocity must be of type array" << std::endl;
+            return false;
+        }
+        QJsonArray velocityArray = prim["velocity"].toArray();
+        if (velocityArray.size() != 3) {
+            std::cout << "primitive velocity array must be of size 3" << std::endl;
+            return false;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (!velocityArray[i].isDouble()) {
+                std::cout << "primitive velocity must contain floating-point values" << std::endl;
+                return false;
+            }
+
+            primitive->velocity[i] = velocityArray[i].toDouble();
+        }
     }
 
     return true;
