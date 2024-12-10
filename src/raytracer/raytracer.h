@@ -42,7 +42,7 @@ public:
     // @param scene The scene to be rendered.
     void render(RGBA *imageData, const RayTraceScene &scene);
 
-    RGBA traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
+    glm::vec4 traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
 
     float calculateColorVariance(RGBA samples[4]);
 

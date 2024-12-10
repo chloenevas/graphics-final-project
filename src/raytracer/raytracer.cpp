@@ -122,12 +122,8 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
 
     for (int r = 0; r < imageHeight; r ++) {
         for (int c = 0; c < imageWidth; c ++) {
-            RGBA color = {0,0,0,255};
+            glm::vec4 color(0,0,0,255);
             if (m_config.enableDepthOfField) {
-                // Use floating point accumulation for colors
-                float accumR = 0.0f;
-                float accumG = 0.0f;
-                float accumB = 0.0f;
 
                 // Number of samples per pixel
                 int samples = 16;  // Increased for better quality
@@ -169,32 +165,28 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                     glm::vec3 rayOrigin = cameraPos + offset;
                     glm::vec3 finalRayDirection = glm::normalize(focalPoint - rayOrigin);
 
-                    RGBA tempColor = traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth);
-
-                    // Accumulate colors as floats
-                    accumR += static_cast<float>(tempColor.r);
-                    accumG += static_cast<float>(tempColor.g);
-                    accumB += static_cast<float>(tempColor.b);
+                    color += traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth);
                 }
+                color /= static_cast<float>(samples);
 
-                // Average and clamp the accumulated colors
-                RGBA finalColor;
-                finalColor.r = static_cast<uint8_t>(std::clamp(accumR / samples, 0.0f, 255.0f));
-                finalColor.g = static_cast<uint8_t>(std::clamp(accumG / samples, 0.0f, 255.0f));
-                finalColor.b = static_cast<uint8_t>(std::clamp(accumB / samples, 0.0f, 255.0f));
-                finalColor.a = 255;
-
-                imageData[r * imageWidth + c] = finalColor;
+                color = glm::clamp(color, 0.0f, 1.0f);
             } else {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                imageData[r * imageWidth + c] = traceRay(scene, root, eyePoint, d, maxDepth);
             }
+            RGBA finalColor;
+            finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);
+            finalColor.g = static_cast<std::uint8_t>(color.g * 255.0f);
+            finalColor.b = static_cast<std::uint8_t>(color.b * 255.0f);
+            finalColor.a = 255;
+
+            imageData[r * imageWidth + c] = finalColor;
         }
+
     }
 }
 
-RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
+glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
 
     const Camera& camera = scene.getCamera();
 
@@ -284,7 +276,7 @@ RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const
         if (reflectivity.r > 0.0f || reflectivity.g > 0.0f || reflectivity.b > 0.0f) {
             if (currentDepth < 4){
             glm::vec3 reflectionDir = glm::reflect(d, normal);
-            RGBA reflectionColor = traceRay(scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
+            glm::vec4 reflectionColor = traceRay(scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
 
             illumination += glm::vec4(
                 scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
@@ -315,7 +307,7 @@ RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const
             }
 
             glm::vec3 refOffset = closestIntersection + epsilon * T;
-            RGBA refractionColor = traceRay(scene, root, refOffset, T, currentDepth + 1);
+            glm::vec4 refractionColor = traceRay(scene, root, refOffset, T, currentDepth + 1);
 
             illumination.r = glm::mix(illumination.r, refractionColor.r / 255.0f, transparency.r * scene.getGlobalData().kt);
             illumination.g = glm::mix(illumination.g, refractionColor.g / 255.0f, transparency.g * scene.getGlobalData().kt);
@@ -323,9 +315,9 @@ RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const
         }
 
         illumination = glm::clamp(illumination, 0.0f, 1.0f);
-        return toRGBA(illumination);
+        return illumination;
     } else {
-        return RGBA{0, 0, 0, 255};
+        return glm::vec4(0,0,0,1.0f);
     }
 }
 
