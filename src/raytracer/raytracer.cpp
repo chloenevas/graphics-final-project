@@ -282,10 +282,10 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             }
             dLens = outputD;
         }
-        // float l = std::sqrt(intersectionPoint[0] * intersectionPoint[0] + intersectionPoint[1] * intersectionPoint[1]);
-        // if (l > lens.aperture) {
-        //     return false;
-        // }
+        float l = std::sqrt(intersectionPoint[0] * intersectionPoint[0] + intersectionPoint[1] * intersectionPoint[1]);
+        if (l > lens.aperture) {
+            return false;
+        }
         eyePointLens = intersectionPoint;
     }
 
