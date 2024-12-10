@@ -9,7 +9,7 @@ Camera::Camera(int width, int height, const RenderData &metaData)
     m_aspectRatio(static_cast<float>(width) / height),
     m_heightAngle(metaData.cameraData.heightAngle),
     m_widthAngle(m_heightAngle*m_aspectRatio),
-    m_focalLength(1.0f),
+    m_focalLength(metaData.cameraData.focalLength),
     m_aperture(metaData.cameraData.aperture),
     m_position(glm::vec3(metaData.cameraData.pos)),
     m_look(metaData.cameraData.look),

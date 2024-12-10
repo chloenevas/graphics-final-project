@@ -122,71 +122,74 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
 
     for (int r = 0; r < imageHeight; r ++) {
         for (int c = 0; c < imageWidth; c ++) {
-            RGBA color = {0,0,0,0};
-            if (m_config.enableDepthOfField){
-                // Number of samples per pixel (adjust based on your needs)
-                int samples = m_config.enableDepthOfField ? 100 : 1;
+            RGBA color = {0,0,0,255};
+            if (m_config.enableDepthOfField) {
+                // Use floating point accumulation for colors
+                float accumR = 0.0f;
+                float accumG = 0.0f;
+                float accumB = 0.0f;
 
-                // Generate multiple samples per pixel for DOF effect
+                // Number of samples per pixel
+                int samples = 16;  // Increased for better quality
+
                 for (int s = 0; s < samples; ++s) {
-                    // Initialize ray directly with the result from generation
-
                     float aspectRatio = camera.getAspectRatio();
 
-                    // Convert pixel coordinates to normalized image space coordinates
-                    float imageSpaceCoordX = (static_cast<float>(c) + 0.5f) / static_cast<float>(imageWidth);
-                    float imageSpaceCoordY = (static_cast<float>(r) + 0.5f) / static_cast<float>(imageHeight);
+                    // Add small random offset to pixel coordinates for anti-aliasing
+                    float jitterX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 0.5f;
+                    float jitterY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 0.5f;
 
-                    // Range coordinates from -1 to 1
+                    float imageSpaceCoordX = (static_cast<float>(c) + 0.5f + jitterX) / static_cast<float>(imageWidth);
+                    float imageSpaceCoordY = (static_cast<float>(r) + 0.5f + jitterY) / static_cast<float>(imageHeight);
+
                     float multiplierX = 2.0f * imageSpaceCoordX - 1.0f;
                     float multiplierY = 1.0f - 2.0f * imageSpaceCoordY;
 
-                    // Compute the height and width of the viewplane based on the height angle
                     float viewplaneHeight = 2.0f * tan(camera.getHeightAngle() / 2.0f);
                     float viewplaneWidth = aspectRatio * viewplaneHeight;
 
-                    // Camera coordinate system
                     glm::vec3 cameraPos = glm::vec3(camera.getPosition());
                     glm::vec3 cameraLook = glm::normalize(glm::vec3(camera.getLook()));
                     glm::vec3 cameraUpInitial = glm::normalize(glm::vec3(camera.getUp()));
                     glm::vec3 cameraRight = glm::normalize(glm::cross(cameraLook, cameraUpInitial));
                     glm::vec3 cameraUp = glm::normalize(glm::cross(cameraRight, cameraLook));
 
-                    // Compute the center of the viewplane
                     glm::vec3 viewplaneCenter = cameraPos + cameraLook;
-
-                    // Compute the horizontal and vertical offsets
                     glm::vec3 horizontal = (viewplaneWidth / 2.0f) * cameraRight;
                     glm::vec3 vertical = (viewplaneHeight / 2.0f) * cameraUp;
-
-                    // Compute the point on the viewplane corresponding to the pixel
                     glm::vec3 viewplanePoint = viewplaneCenter + (multiplierX * horizontal) + (multiplierY * vertical);
 
-                    // Calculate original ray direction
                     glm::vec3 rayDirection = glm::normalize(viewplanePoint - cameraPos);
-
-                    // Calculate the focal point
                     glm::vec3 focalPoint = cameraPos + camera.getFocalLength() * rayDirection;
 
-                    // Generate random point in defocus disk
                     glm::vec3 randomDiskPoint = camera.random_in_unit_disk();
                     glm::vec3 offset = (camera.getAperture() / 2.0f) *
                                        (randomDiskPoint.x * cameraRight + randomDiskPoint.y * cameraUp);
 
-                    // Create ray from offset origin through focal point
-                    eyePoint = cameraPos + offset;
-                    glm::vec3 d = glm::normalize(focalPoint - eyePoint);
+                    glm::vec3 rayOrigin = cameraPos + offset;
+                    glm::vec3 finalRayDirection = glm::normalize(focalPoint - rayOrigin);
 
-                    color += traceRay(scene, root, eyePoint, d, maxDepth);
+                    RGBA tempColor = traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth);
+
+                    // Accumulate colors as floats
+                    accumR += static_cast<float>(tempColor.r);
+                    accumG += static_cast<float>(tempColor.g);
+                    accumB += static_cast<float>(tempColor.b);
                 }
 
-                // Average the samples
-                color /= static_cast<float>(samples);
-            }else{
-                glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                color = traceRay(scene, root, eyePoint, d, maxDepth);
+                // Average and clamp the accumulated colors
+                RGBA finalColor;
+                finalColor.r = static_cast<uint8_t>(std::clamp(accumR / samples, 0.0f, 255.0f));
+                finalColor.g = static_cast<uint8_t>(std::clamp(accumG / samples, 0.0f, 255.0f));
+                finalColor.b = static_cast<uint8_t>(std::clamp(accumB / samples, 0.0f, 255.0f));
+                finalColor.a = 255;
+
+                imageData[r * imageWidth + c] = finalColor;
+            } else {
+                glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
+                                                 glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+                imageData[r * imageWidth + c] = traceRay(scene, root, eyePoint, d, maxDepth);
             }
-            imageData[r * scene.width() + c] = color;
         }
     }
 }
@@ -325,34 +328,4 @@ RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const
         return RGBA{0, 0, 0, 255};
     }
 }
-
-
-float RayTracer::calculateColorVariance(RGBA samples[4]) {
-    float variance = 0.0f;
-    for (int i = 0; i < 3; i++) {
-        for (int j = i + 1; j < 4; j++) {
-            float dr = static_cast<float>(samples[i].r) - static_cast<float>(samples[j].r);
-            float dg = static_cast<float>(samples[i].g) - static_cast<float>(samples[j].g);
-            float db = static_cast<float>(samples[i].b) - static_cast<float>(samples[j].b);
-            variance += dr * dr + dg * dg + db * db;
-        }
-    }
-    return variance / 6.0f;
-}
-
-RGBA RayTracer::averageColor(RGBA samples[4]) {
-    float r = 0, g = 0, b = 0;
-    for (int i = 0; i < 4; i++) {
-        r += static_cast<float>(samples[i].r);
-        g += static_cast<float>(samples[i].g);
-        b += static_cast<float>(samples[i].b);
-    }
-    return RGBA{
-        static_cast<std::uint8_t>(r / 4),
-        static_cast<std::uint8_t>(g / 4),
-        static_cast<std::uint8_t>(b / 4),
-        255
-    };
-}
-
 

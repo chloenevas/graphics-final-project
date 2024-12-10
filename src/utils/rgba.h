@@ -11,10 +11,9 @@ struct RGBA {
 
     // Overload the += operator
     RGBA& operator+=(const RGBA& other) {
-        r = std::clamp(static_cast<int>(r) + static_cast<int>(other.r), 0, 255);
-        g = std::clamp(static_cast<int>(g) + static_cast<int>(other.g), 0, 255);
-        b = std::clamp(static_cast<int>(b) + static_cast<int>(other.b), 0, 255);
-        a = std::clamp(static_cast<int>(a) + static_cast<int>(other.a), 0, 255);
+        r += other.r;
+        g += other.g;
+        b += other.b;
         return *this;
     }
 
@@ -23,10 +22,9 @@ struct RGBA {
         if (divisor == 0) {
             throw std::runtime_error("Division by zero");
         }
-        r = static_cast<std::uint8_t>(std::clamp(r / divisor, 0, 255));
-        g = static_cast<std::uint8_t>(std::clamp(g / divisor, 0, 255));
-        b = static_cast<std::uint8_t>(std::clamp(b / divisor, 0, 255));
-        a = static_cast<std::uint8_t>(std::clamp(a / divisor, 0, 255));
+        r /= divisor;
+        g /= divisor;
+        b /= divisor;
         return *this;
     }
 };
