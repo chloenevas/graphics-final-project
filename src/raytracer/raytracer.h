@@ -27,6 +27,7 @@ public:
         bool enableSuperSample   = false;
         bool enableAcceleration  = false;
         bool enableDepthOfField  = true;
+        bool enableMotionBlur = true;
         int maxRecursiveDepth    = 4;
         bool onlyRenderNormals   = false;
         bool samples_per_pixel = 100;
@@ -43,7 +44,7 @@ public:
     // @param scene The scene to be rendered.
     void render(RGBA *imageData, const RayTraceScene &scene);
 
-    glm::vec4 traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
+    glm::vec4 traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time);
 
 
 private:

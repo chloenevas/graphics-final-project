@@ -2,8 +2,8 @@
 #include "imagereader.h"
 #include <iostream>
 
-Sphere::Sphere(const glm::mat4& ctm, const SceneMaterial& material, const Image* image)
-    : Shape(ctm, material, image), m_center(0,0,0), m_radius(0.5f) {
+Sphere::Sphere(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
+    : Shape(ctm, material, velocity, image), m_center(0,0,0), m_radius(0.5f) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
@@ -19,10 +19,14 @@ glm::vec3 Sphere::calcNormal(const glm::vec3 point) {
 }
 
 // Method to calculate the intersection with a ray
-bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t) {
+bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t, float time) {
 
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayOrigin, 1.0f));
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
+
+    // calculate vector from ray origin to moving sphere's center
+    glm::vec3 movingCenter = m_center + time * m_velocity;
+    P = P - movingCenter;
 
     float a = glm::dot(d, d);
     float b = 2.0f * glm::dot(P, d);
