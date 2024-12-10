@@ -81,7 +81,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 d = glm::normalize(scene.getPoint(r, c, camera));
                 glm::vec3 eyePointLens;
                 glm::vec3 dLens;
-                if (r == 300 && c == 500) {
+                if (r == 300 && c == 200) {
                     auto gdg = 0;
                 }
                 if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces())) {
@@ -252,7 +252,6 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
     glm::vec3 dLens = d;
     glm::vec3 eyePointLens = eyePoint;
     float z = 0.0f;
-    // for (int i = lenses.size() - 1; i >= 0; i--) {
     for (int i = 0; i < lenses.size(); i++) {
         LensInterface lens = lenses[i];
         z -= lens.thickness;
@@ -276,7 +275,6 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
                 n = sphere.calcNormal(intersectionPoint);
             }
             float n1 = lens.n;
-            // float n2 = (i > 0 && lenses[i - 1].n != 0) ? lenses[i - 1].n : 1.0f;
             float n2 = (i < lenses.size() - 1 && lenses[i + 1].n != 0) ? lenses[i+1].n : 1.0f;
             glm::vec3 outputD;
             if (!refract(glm::normalize(-dLens), n, n1, n2, &outputD)) {
@@ -284,10 +282,10 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             }
             dLens = outputD;
         }
-        float l = std::sqrt(intersectionPoint[0] * intersectionPoint[0] + intersectionPoint[1] * intersectionPoint[1]);
-        if (l > lens.aperture) {
-            return false;
-        }
+        // float l = std::sqrt(intersectionPoint[0] * intersectionPoint[0] + intersectionPoint[1] * intersectionPoint[1]);
+        // if (l > lens.aperture) {
+        //     return false;
+        // }
         eyePointLens = intersectionPoint;
     }
 
@@ -301,7 +299,6 @@ bool RayTracer::refract(glm::vec3 d, glm::vec3 normal, float n1, float n2, glm::
     float cos1 = glm::dot(d, normal);
     bool entering = cos1 < 0.0f;
     cos1 = entering ? -cos1 : cos1;
-    normal = entering ? normal : normal;
     float sin1 = std::max(0.0f, 1.0f - cos1 * cos1);
     float sin2 = eta * eta * sin1;
     if (sin2 >= 1.0f) {
@@ -309,24 +306,6 @@ bool RayTracer::refract(glm::vec3 d, glm::vec3 normal, float n1, float n2, glm::
     }
     float cos2 = std::sqrt(1.0f - sin2);
     *outputD = glm::normalize(eta * -d + (eta * cos1 - cos2) * normal);
-
-    // float cosTheta1 = glm::dot(d, normal);
-    // float eta = n1/n2;
-    // bool entering = cosTheta1 < 0.0f;
-    // cosTheta1 = entering ? cosTheta1 : -cosTheta1;
-    // glm::vec3 refNorm = entering ? normal : -normal;
-
-    // float k = 1.0f - eta * eta * (1.0f - cosTheta1 * cosTheta1);
-
-    // glm::vec3 T;
-    // if (k < 0.0f) {
-    //     T = d - 2.0f * glm::dot(d, refNorm) * refNorm;
-    // } else {
-    //     float cosTheta2 = std::sqrt(k);
-    //     T = (eta * d) + (((eta * cosTheta1) - cosTheta2) * refNorm);
-    // }
-    // *outputD = T;
-
 
     return true;
 }
