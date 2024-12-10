@@ -50,3 +50,9 @@
 9	33	1733856928958961342	/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/projects_ray_autogen/mocs_compilation.cpp	2f97555cf6be4794
 34	970	1733856928983905240	CMakeFiles/projects_ray.dir/src/utils/sphere.cpp.o	cbeef05b018bd2cf
 970	1185	1733856929919854839	projects_ray	33fdc22ad64392df
+25	55	1733859214557710896	projects_ray_autogen/timestamp	2f97555cf6be4794
+25	55	1733859214557710896	projects_ray_autogen/mocs_compilation.cpp	2f97555cf6be4794
+25	55	1733859214557710896	/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/projects_ray_autogen/timestamp	2f97555cf6be4794
+25	55	1733859214557710896	/Users/chloenevas/Documents/cs1230/graphics-final-project/build/build-graphics-final-project-Qt_6_5_3_macos-Release/projects_ray_autogen/mocs_compilation.cpp	2f97555cf6be4794
+59	2232	1733859214597914810	CMakeFiles/projects_ray.dir/src/raytracer/raytracer.cpp.o	5d7f505866ae0c27
+2233	2474	1733859216765020230	projects_ray	33fdc22ad64392df
