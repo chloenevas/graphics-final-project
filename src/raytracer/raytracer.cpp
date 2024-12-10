@@ -214,8 +214,8 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                 glm::vec3 lightV = glm::cross(lightNormal, lightU);
 
                 for (int s = 0; s < shadowSamples; s++) {
-                    float u = (float)rand() / RAND_MAX - 0.5f;
-                    float v = (float)rand() / RAND_MAX - 0.5f;
+                    float u = (static_cast<float>(rand()) / RAND_MAX - 0.5f);
+                    float v = (static_cast<float>(rand()) / RAND_MAX - 0.5f);
 
                     glm::vec3 samplePos = glm::vec3(light.pos) +
                                           (u * light.width * lightU) +
@@ -242,15 +242,18 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                         shadowFactor += 1.0f;
                     }
                 }
-                shadowFactor /= shadowSamples;
+                shadowFactor /= static_cast<float>(shadowSamples);
 
                 if (shadowFactor > 0.0f) {
+                    // std::cout << "Shadow factor: " << shadowFactor << std::endl;
                     glm::vec4 lightContribution = phong(scene, closestIntersection, normal,
                                                         directionToCamera, closestShape->getMaterial(),
                                                         light, closestShape->getTexture(closestIntersection));
+                    // std::cout << "Light contribution: " << lightContribution.x << ", " << lightContribution.y << ", " << lightContribution.z << std::endl;
                     illumination += lightContribution * shadowFactor;
+                    // std::cout << "Accumulated illumination: " << illumination.x << ", " << illumination.y << ", " << illumination.z << std::endl;
                 }
-            }else{
+            } else {
                 glm::vec3 lightDirection;
                 float maxDistance = std::numeric_limits<float>::max();
 

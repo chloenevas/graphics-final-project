@@ -10,27 +10,36 @@ glm::vec4 phong(const RayTraceScene &scene,
            glm::vec3 texture) {
     glm::vec4 illumination(0, 0, 0, 1);
     if (light.type == LightType::LIGHT_AREA) {
-        // We'll use multiple samples on the area light surface
-        const int numSamples = 16; // Can be adjusted for quality vs performance
+        const int numSamples = 16;
         glm::vec4 totalIllumination(0, 0, 0, 1);
 
-        // Get basis vectors for the light rectangle
+        // Debug the inputs
+        // std::cout << "Light direction vector: " << light.dir.x << ", " << light.dir.y << ", " << light.dir.z << std::endl;
+
+        // Create basis vectors for the light rectangle
         glm::vec3 lightNormal = glm::normalize(glm::vec3(light.dir));
-        glm::vec3 lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(0, 1, 0)));
-        if (glm::length(lightU) < 0.1f) {
-            lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(1, 0, 0)));
-        }
-        glm::vec3 lightV = glm::cross(lightNormal, lightU);
 
-        // Sample points on the area light
+        // Choose a different up vector if light direction is too close to (0,1,0)
+        glm::vec3 upVector = (std::abs(glm::dot(lightNormal, glm::vec3(0, 1, 0))) > 0.9f) ?
+                                 glm::vec3(1, 0, 0) : glm::vec3(0, 1, 0);
+
+        // Calculate orthogonal vectors for the light surface
+        glm::vec3 lightU = glm::normalize(glm::cross(lightNormal, upVector));
+        glm::vec3 lightV = glm::normalize(glm::cross(lightU, lightNormal));
+
+        // Debug the basis vectors
+        // std::cout << "Light U: " << lightU.x << ", " << lightU.y << ", " << lightU.z << std::endl;
+        // std::cout << "Light V: " << lightV.x << ", " << lightV.y << ", " << lightV.z << std::endl;
+
         for (int i = 0; i < numSamples; i++) {
-            // Generate random point on the light surface
-            float u = (float)rand() / RAND_MAX - 0.5f;
-            float v = (float)rand() / RAND_MAX - 0.5f;
+            // Uniform random sampling over the light's area
+            float u = light.width * (static_cast<float>(rand()) / RAND_MAX - 0.5f);
+            float v = light.height * (static_cast<float>(rand()) / RAND_MAX - 0.5f);
 
-            glm::vec3 samplePos = glm::vec3(light.pos) +
-                                  (u * light.width * lightU) +
-                                  (v * light.height * lightV);
+            // Calculate sample position
+            glm::vec3 samplePos = glm::vec3(light.pos) + (u * lightU) + (v * lightV);
+
+            // std::cout << "Sample pos " << i << ": " << samplePos.x << ", " << samplePos.y << ", " << samplePos.z << std::endl;
 
             glm::vec3 directionToLight = samplePos - position;
             float distance = glm::length(directionToLight);
@@ -42,12 +51,12 @@ glm::vec4 phong(const RayTraceScene &scene,
                                               light.function.z * distance * distance);
             sampleAttenuation = glm::min(sampleAttenuation, 1.0f);
 
-            // Calculate contribution from this sample
             float dotProduct = glm::dot(normal, normalizedDirToLight);
             if (dotProduct > 0) {
                 glm::vec4 diffuseBlend = glm::mix(material.cDiffuse * scene.getGlobalData().kd,
                                                   glm::vec4(texture, 0.0f),
                                                   material.blend);
+
                 totalIllumination += diffuseBlend * dotProduct * light.color * sampleAttenuation;
 
                 glm::vec3 reflection = glm::reflect(normalizedDirToLight, normal);
@@ -114,7 +123,6 @@ glm::vec4 phong(const RayTraceScene &scene,
     float specFactor = glm::pow(specAngle, material.shininess);
     glm::vec3 specular = material.cSpecular * scene.getGlobalData().ks * specFactor * intensity *  light.color * attenuation;
     illumination += glm::vec4(specular, 0.0f);
-
     return illumination;
 }
 
