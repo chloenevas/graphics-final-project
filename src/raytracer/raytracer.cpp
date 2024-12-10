@@ -131,16 +131,15 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
 
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                int samples = 6;
+                int samples = 5;
                 for (int s = 0; s < samples; ++s) {
-                    float time = static_cast<float>(arc4random()) / RAND_MAX;
+                    float time = (s + static_cast<float>(rand()) / RAND_MAX) / samples;
 
                     color += traceRay(scene, root, eyePoint, d, maxDepth, time);
                 }
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
-
             }
             RGBA finalColor;
             finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);
@@ -180,9 +179,18 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
     }
 
     if (closestShape != nullptr) {
-        glm::vec3 normal = closestShape->calcNormal(closestIntersection);
+        glm::vec3 normal = closestShape->calcNormal(closestIntersection, time);
+        // normal[0] = (normal[0] + 1)*0.5;
+        // normal[1] = (normal[1] + 1)*0.5;
+        // normal[2] = (normal[2] + 1)*0.5;
+
+        // return glm::vec4(normal, 0);
         const float epsilon = 1e-2f;
         glm::vec3 offsetIntersection = closestIntersection + epsilon * normal;
+
+        // if (!dynamic_cast<Sphere*>(closestShape)) {
+        //     offsetIntersection += epsilon * normal;
+        // }
         glm::vec3 directionToCamera = glm::normalize(-d);
 
         glm::vec3 ambient = scene.getGlobalData().ka * closestShape->getMaterial().cAmbient;
@@ -205,7 +213,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                 float shadowT;
                 glm::vec3 shadowIntersection;
 
-                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, time)) {
+                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
                     float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
 
                     if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
