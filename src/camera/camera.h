@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "utils/sceneparser.h"
+#include <random>
 
 // A class representing a virtual camera.
 
@@ -17,7 +18,23 @@ private:
     float m_heightAngle;      // Stores the height angle in radians
     float m_widthAngle;
     float m_focalLength;      // Stores the focal length for depth of field (optional)
-    float m_aperture;
+    float m_aperture;        // Controls the size of the defocus disk
+    glm::vec3 m_position;    // Camera position (lookfrom)
+    glm::vec3 m_look;    // Camera position (lookfrom)
+    glm::vec3 m_up;    // Camera position (lookfrom)
+
+    // Helper function for defocus blur
+    glm::vec3 randomInUnitDisk() const {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
+
+        while (true) {
+            glm::vec3 p(dis(gen), dis(gen), 0.0f);
+            if (glm::dot(p, p) < 1.0f)
+                return p;
+        }
+    }
 
 public:
     Camera(int width, int height, const RenderData &metaData);
@@ -38,6 +55,10 @@ public:
 
     float getWidthAngle() const;
 
+    glm::vec3 getLook() const;
+
+    glm::vec3 getUp() const;
+
     // Returns the focal length of this camera.
     // This is for the depth of field extra-credit feature only;
     // You can ignore if you are not attempting to implement depth of field.
@@ -47,4 +68,19 @@ public:
     // This is for the depth of field extra-credit feature only;
     // You can ignore if you are not attempting to implement depth of field.
     float getAperture() const;
+
+    glm::vec3 getPosition() const { return m_position; }
+
+    // Helper function to generate random point in unit disk for DOF
+    glm::vec3 random_in_unit_disk() const {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<float> dis(-1.0f, 1.0f);
+
+        while (true) {
+            glm::vec3 p(dis(gen), dis(gen), 0.0f);
+            if (glm::dot(p, p) < 1.0f)
+                return p;
+        }
+    }
 };

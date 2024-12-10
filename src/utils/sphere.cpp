@@ -27,12 +27,13 @@ bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDire
 
     // sphere moves from 0, 0, 0, to 0, 2, 0
 
+   // std::cout<<time<<std::endl;
     // glm::vec3 movingCenter = m_center + glm::vec3(0.0f, static_cast<float>(0.07), 0.0f)*time;
     glm::vec3 movingCenter = m_center + (glm::vec3(0.0f, 0.1f, 0.0f) - m_center)*((time - 0) / (1 - 0));
         //return position_start + (position_end - position_start) * ((t - t_start) / (t_end - t_start));
 
     // calculate vector from ray origin to moving sphere's center
-    P = P - movingCenter;
+    //P = P - movingCenter;
 
     float a = glm::dot(d, d);
     float b = 2.0f * glm::dot(P, d);
