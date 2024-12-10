@@ -64,6 +64,15 @@ void traverseSceneGraph(SceneNode* node, glm::mat4 parentCTM, std::vector<Render
             lightData.angle = light->angle;
             break;
 
+        case LightType::LIGHT_AREA:
+            lightData.pos = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            lightData.pos = currentCTM * lightData.pos;
+            lightData.dir = light->dir;
+            lightData.dir = glm::normalize(currentCTM * lightData.dir);
+            lightData.width = light->width;
+            lightData.height = light->height;
+            break;
+
         default:
             break;
         }

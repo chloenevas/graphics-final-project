@@ -131,9 +131,6 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
             } else if (m_config.enableMotionBlur) {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-<<<<<<< HEAD
-                color = traceRay(scene, root, eyePoint, d, maxDepth);
-=======
                 int samples = 20;
                 for (int s = 0; s < samples; ++s) {
 
@@ -154,7 +151,6 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 // dummy unused value for time
                 color = traceRay(scene, root, eyePoint, d, maxDepth, 0);
 
->>>>>>> refs/remotes/origin/main
             }
             RGBA finalColor;
             finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);
@@ -205,37 +201,88 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         glm::vec4 illumination = glm::vec4(ambient, 1.0f);
 
         for (const SceneLightData &light : scene.getLights()) {
-            glm::vec3 lightDirection;
-            float maxDistance = std::numeric_limits<float>::max();
+            if (light.type == LightType::LIGHT_AREA) {
+                // Sample multiple points on the area light for soft shadows
+                const int shadowSamples = 16; // Can be adjusted
+                float shadowFactor = 0.0f;
 
-            if (light.type == LightType::LIGHT_POINT || light.type == LightType::LIGHT_SPOT) {
-                lightDirection = glm::normalize(glm::vec3(light.pos) - offsetIntersection);
-                maxDistance = glm::length(glm::vec3(light.pos) - offsetIntersection);
-            } else {
-                lightDirection = glm::normalize(glm::vec3(-light.dir));
-            }
+                glm::vec3 lightNormal = glm::normalize(glm::vec3(light.dir));
+                glm::vec3 lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(0, 1, 0)));
+                if (glm::length(lightU) < 0.1f) {
+                    lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(1, 0, 0)));
+                }
+                glm::vec3 lightV = glm::cross(lightNormal, lightU);
 
-            bool isInShadow = false;
+                for (int s = 0; s < shadowSamples; s++) {
+                    float u = (float)rand() / RAND_MAX - 0.5f;
+                    float v = (float)rand() / RAND_MAX - 0.5f;
 
-            for (const auto shadowShape : shapes) {
-                float shadowT;
-                glm::vec3 shadowIntersection;
+                    glm::vec3 samplePos = glm::vec3(light.pos) +
+                                          (u * light.width * lightU) +
+                                          (v * light.height * lightV);
 
-                // calculate shadows based on the shape's position at time = 0
-                if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
-                    float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
+                    glm::vec3 shadowDir = glm::normalize(samplePos - offsetIntersection);
+                    float maxDist = glm::length(samplePos - offsetIntersection);
 
-                    if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
-                        isInShadow = true;
-                        break;
+                    bool sampleInShadow = false;
+                    for (const auto shadowShape : shapes) {
+                        float shadowT;
+                        glm::vec3 shadowIntersection;
+
+                        if (shadowShape->calcIntersection(offsetIntersection, shadowDir,
+                                                          shadowIntersection, shadowT, 0)) {
+                            float shadowDist = glm::length(shadowIntersection - offsetIntersection);
+                            if (shadowDist < maxDist) {
+                                sampleInShadow = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!sampleInShadow) {
+                        shadowFactor += 1.0f;
                     }
                 }
-            }
+                shadowFactor /= shadowSamples;
 
-            if (!isInShadow) {
-                glm::vec4 lightContribution = phong(scene, closestIntersection, normal, directionToCamera,
-                                                    closestShape->getMaterial(), light, closestShape->getTexture(closestIntersection));
-                illumination += lightContribution;
+                if (shadowFactor > 0.0f) {
+                    glm::vec4 lightContribution = phong(scene, closestIntersection, normal,
+                                                        directionToCamera, closestShape->getMaterial(),
+                                                        light, closestShape->getTexture(closestIntersection));
+                    illumination += lightContribution * shadowFactor;
+                }
+            }else{
+                glm::vec3 lightDirection;
+                float maxDistance = std::numeric_limits<float>::max();
+
+                if (light.type == LightType::LIGHT_POINT || light.type == LightType::LIGHT_SPOT) {
+                    lightDirection = glm::normalize(glm::vec3(light.pos) - offsetIntersection);
+                    maxDistance = glm::length(glm::vec3(light.pos) - offsetIntersection);
+                } else {
+                    lightDirection = glm::normalize(glm::vec3(-light.dir));
+                }
+
+                bool isInShadow = false;
+
+                for (const auto shadowShape : shapes) {
+                    float shadowT;
+                    glm::vec3 shadowIntersection;
+
+                    // calculate shadows based on the shape's position at time = 0
+                    if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
+                        float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
+
+                        if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
+                            isInShadow = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!isInShadow) {
+                    glm::vec4 lightContribution = phong(scene, closestIntersection, normal, directionToCamera,
+                                                        closestShape->getMaterial(), light, closestShape->getTexture(closestIntersection));
+                    illumination += lightContribution;
+                }
             }
         }
 

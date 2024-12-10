@@ -8,8 +8,62 @@ glm::vec4 phong(const RayTraceScene &scene,
            SceneMaterial material,
            SceneLightData light,
            glm::vec3 texture) {
-
     glm::vec4 illumination(0, 0, 0, 1);
+    if (light.type == LightType::LIGHT_AREA) {
+        // We'll use multiple samples on the area light surface
+        const int numSamples = 16; // Can be adjusted for quality vs performance
+        glm::vec4 totalIllumination(0, 0, 0, 1);
+
+        // Get basis vectors for the light rectangle
+        glm::vec3 lightNormal = glm::normalize(glm::vec3(light.dir));
+        glm::vec3 lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(0, 1, 0)));
+        if (glm::length(lightU) < 0.1f) {
+            lightU = glm::normalize(glm::cross(lightNormal, glm::vec3(1, 0, 0)));
+        }
+        glm::vec3 lightV = glm::cross(lightNormal, lightU);
+
+        // Sample points on the area light
+        for (int i = 0; i < numSamples; i++) {
+            // Generate random point on the light surface
+            float u = (float)rand() / RAND_MAX - 0.5f;
+            float v = (float)rand() / RAND_MAX - 0.5f;
+
+            glm::vec3 samplePos = glm::vec3(light.pos) +
+                                  (u * light.width * lightU) +
+                                  (v * light.height * lightV);
+
+            glm::vec3 directionToLight = samplePos - position;
+            float distance = glm::length(directionToLight);
+            glm::vec3 normalizedDirToLight = glm::normalize(directionToLight);
+
+            // Calculate attenuation
+            float sampleAttenuation = 1.0f / (light.function.x +
+                                              light.function.y * distance +
+                                              light.function.z * distance * distance);
+            sampleAttenuation = glm::min(sampleAttenuation, 1.0f);
+
+            // Calculate contribution from this sample
+            float dotProduct = glm::dot(normal, normalizedDirToLight);
+            if (dotProduct > 0) {
+                glm::vec4 diffuseBlend = glm::mix(material.cDiffuse * scene.getGlobalData().kd,
+                                                  glm::vec4(texture, 0.0f),
+                                                  material.blend);
+                totalIllumination += diffuseBlend * dotProduct * light.color * sampleAttenuation;
+
+                glm::vec3 reflection = glm::reflect(normalizedDirToLight, normal);
+                float specAngle = glm::dot(glm::normalize(-reflection), directionToCamera);
+                if (specAngle > 0) {
+                    float specFactor = glm::pow(specAngle, material.shininess);
+                    glm::vec3 specular = material.cSpecular * scene.getGlobalData().ks *
+                                         specFactor * light.color * sampleAttenuation;
+                    totalIllumination += glm::vec4(specular, 0.0f);
+                }
+            }
+        }
+
+        illumination += totalIllumination / float(numSamples);
+        return illumination;
+    }
 
     float attenuation = 1.0f;
     glm::vec3 lightDirection;

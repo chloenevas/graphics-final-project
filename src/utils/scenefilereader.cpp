@@ -204,7 +204,7 @@ bool ScenefileReader::parseGlobalData(const QJsonObject &globalData) {
  */
 bool ScenefileReader::parseLightData(const QJsonObject &lightData, SceneNode *node) {
     QStringList requiredFields = {"type", "color"};
-    QStringList optionalFields = {"name", "attenuationCoeff", "direction", "penumbra", "angle"};
+    QStringList optionalFields = {"name", "attenuationCoeff", "direction", "penumbra", "angle", "width", "height"};
     QStringList allFields = requiredFields + optionalFields;
     for (auto &field : lightData.keys()) {
         if (!allFields.contains(field)) {
@@ -362,7 +362,60 @@ bool ScenefileReader::parseLightData(const QJsonObject &lightData, SceneNode *no
             return false;
         }
         light->angle = lightData["angle"].toDouble() * M_PI / 180.f;
-    }
+    }else if (lightType == "area") {
+            QStringList areaRequiredFields = {"direction", "width", "height", "attenuationCoeff"};
+            for (auto &field : areaRequiredFields) {
+                if (!lightData.contains(field)) {
+                    std::cout << "missing required field \"" << field.toStdString() << "\" on area light object" << std::endl;
+                    return false;
+                }
+            }
+            light->type = LightType::LIGHT_AREA;
+
+            // Parse direction
+            if (!lightData["direction"].isArray()) {
+                std::cout << "area light direction must be of type array" << std::endl;
+                return false;
+            }
+            QJsonArray directionArray = lightData["direction"].toArray();
+            if (directionArray.size() != 3) {
+                std::cout << "area light direction must be of size 3" << std::endl;
+                return false;
+            }
+            if (!directionArray[0].isDouble() || !directionArray[1].isDouble() || !directionArray[2].isDouble()) {
+                std::cout << "area light direction must contain floating-point values" << std::endl;
+                return false;
+            }
+            light->dir.x = directionArray[0].toDouble();
+            light->dir.y = directionArray[1].toDouble();
+            light->dir.z = directionArray[2].toDouble();
+
+            // Parse width and height
+            if (!lightData["width"].isDouble() || !lightData["height"].isDouble()) {
+                std::cout << "area light width and height must be floating-point values" << std::endl;
+                return false;
+            }
+            light->width = lightData["width"].toDouble();
+            light->height = lightData["height"].toDouble();
+
+            // Parse attenuation coefficient
+            if (!lightData["attenuationCoeff"].isArray()) {
+                std::cout << "area light attenuationCoeff must be of type array" << std::endl;
+                return false;
+            }
+            QJsonArray attenuationArray = lightData["attenuationCoeff"].toArray();
+            if (attenuationArray.size() != 3) {
+                std::cout << "area light attenuationCoeff must be of size 3" << std::endl;
+                return false;
+            }
+            if (!attenuationArray[0].isDouble() || !attenuationArray[1].isDouble() || !attenuationArray[2].isDouble()) {
+                std::cout << "area light attenuationCoeff must contain floating-point values" << std::endl;
+                return false;
+            }
+            light->function.x = attenuationArray[0].toDouble();
+            light->function.y = attenuationArray[1].toDouble();
+            light->function.z = attenuationArray[2].toDouble();
+        }
     else {
         std::cout << "unknown light type \"" << lightType << "\"" << std::endl;
         return false;

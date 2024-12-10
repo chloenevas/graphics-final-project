@@ -10,6 +10,7 @@ enum class LightType {
     LIGHT_POINT,
     LIGHT_DIRECTIONAL,
     LIGHT_SPOT,
+    LIGHT_AREA
 };
 
 // Enum of the types of primitives that might be in the scene
