@@ -75,62 +75,27 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
 
     for (int r = 0; r < scene.height(); r ++) {
         for (int c = 0; c < scene.width(); c ++) {
-            imageData[r * scene.width() + c] = superSamp(r, c, 1.0f, scene, root, camera, eyePoint, maxDepth, lens);
+            glm::vec3 d, p;
+
+            if (lens) {
+                d = glm::normalize(scene.getPoint(r, c, camera));
+
+                glm::vec3 eyePointLens;
+                glm::vec3 dLens;
+                if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces())) {
+                    imageData[r * scene.width() + c] = RGBA{0, 0, 0, 255};
+                } else {
+                    d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
+                    p = camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f);
+                    imageData[r * scene.width() + c] = traceRay(r, c, scene, root, p, d, 0);
+                }
+            } else {
+                d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+                p = eyePoint;
+                imageData[r * scene.width() + c] = traceRay(r, c, scene, root, p, d, 0);
+            }
         }
     }
-}
-
-RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                                    const Camera &camera, const glm::vec3 &eyePoint, int maxDepth, bool lens) {
-
-    glm::vec3 d, p;
-
-    if (lens) {
-        d = glm::normalize(scene.getPoint(r, c, camera));
-        bool debug = false;
-
-        if (r == 384 && c == 513) {
-            debug = true;
-        }
-
-        glm::vec3 eyePointLens;
-        glm::vec3 dLens;
-        if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces(), debug)) {
-            return RGBA{0, 0, 0, 255};
-        }
-
-        d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
-        p = camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f);
-    } else {
-        d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-        p = eyePoint;
-
-    }
-
-    // float threshold = 0.1;
-    // float halfPixel = pixelSize / 2.0f;
-
-    // RGBA samples[4] = {
-    //     traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-    //     traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-    //     traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, eyePoint, d, 0),
-    //     traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, eyePoint, d, 0)
-    // };
-
-    // float variance = calculateColorVariance(samples);
-
-    // if (variance < threshold || maxDepth == 0) {
-    //     return averageColor(samples);
-    // }
-
-    // RGBA subSamples[4] = {
-    //     superSamp(r, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
-    //     superSamp(r + halfPixel, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
-    //     superSamp(r, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens),
-    //     superSamp(r + halfPixel, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1, lens)
-    // };
-
-    return traceRay(r, c, scene, root, p, d, 0);
 }
 
 
@@ -281,16 +246,11 @@ RGBA RayTracer::averageColor(RGBA samples[4]) {
     };
 }
 
-bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d, glm::vec3 *eyePointOut, glm::vec3 *dOut, std::vector<LensInterface> lenses, bool debug) {
-    glm::mat3 scaleMatrix = glm::mat3(1.0);
-    scaleMatrix[2][2] = 1.0f;
-    glm::vec3 dLens = scaleMatrix * d;
-    glm::vec3 eyePointLens = scaleMatrix * eyePoint;
+bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d, glm::vec3 *eyePointOut, glm::vec3 *dOut, std::vector<LensInterface> lenses) {
+    glm::vec3 dLens = d;
+    glm::vec3 eyePointLens = eyePoint;
     float z = 0.0f;
-    for (int i = lenses.size() - 1; i >= 0; i--) {
-        if (debug && i ==0) {
-            auto hello = 0;
-        }
+    for (int i = lenses.size() - 1; i >= 0; --i) {
         LensInterface lens = lenses[i];
         z -= lens.thickness;
         float t;
@@ -299,16 +259,12 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
         bool isStop = (lens.radius == 0);
         if (isStop) {
             t = (z - eyePointLens[2]) / dLens[2];
-            intersectionPoint = dLens * t + eyePointLens;
+            intersectionPoint = eyePointLens + t * dLens;
         } else {
             float r = lens.radius;
             float center = z + r;
             glm::mat4 translation = glm::mat4(1.0f);
             translation[3][2] = center;
-            float scalingFactor = (r/0.5f);
-            translation[0][0] =  scalingFactor;
-            translation[1][1] =  scalingFactor;
-            translation[2][2] =  scalingFactor;
             Sphere sphere = Sphere(translation, SceneMaterial{}, nullptr);
             sphere.setIsLens(true);
             sphere.setRadius(r);
@@ -335,8 +291,8 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
         }
     }
 
-    *dOut = scaleMatrix * dLens;
-    *eyePointOut = scaleMatrix * eyePointLens;
+    *dOut = dLens;
+    *eyePointOut = eyePointLens;
     return true;
 }
 

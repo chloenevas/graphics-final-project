@@ -67,9 +67,6 @@ bool LensFileReader::readLensFile() {
     }
 
     for (int i = 0; i < (int)lensData.size(); i += 4) {
-        // if (lensData[i] == 0) {
-        //         lensData[i + 3] = apertureDiameter;
-        // } fix later??
         m_lensInterfaces.push_back(LensInterface
             {lensData[i] * 0.001f, lensData[i + 1] * 0.001f,
              lensData[i + 2], lensData[i + 3] * 0.001f / 2.0f});
