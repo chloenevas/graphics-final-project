@@ -17,12 +17,13 @@ enum ImageType {
 };
 
 struct Settings {
+    QString currImagePath;
     bool depth = false;
     bool motion = false;
     bool lens = false;
     bool sandbox = false;
 
-    int currImage = IMAGE2;
+    int currImage = -1;
 
     // bool image1;
     // bool image2;

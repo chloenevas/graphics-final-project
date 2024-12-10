@@ -129,6 +129,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
             } else {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+                color = traceRay(scene, root, eyePoint, d, maxDepth);
             }
             RGBA finalColor;
             finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);

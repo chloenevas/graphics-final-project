@@ -38,24 +38,10 @@ private:
     void addCheckBox(QBoxLayout *layout, QString text, bool value, auto function);
     void addSlider(QSlider *slider, QSpinBox *box, QBoxLayout *layout, QString text, float tick, int min, int max, int value);
     void onTabChanged(int index);
-    void updateImage(int value);
 
 private slots:
-    void setImage(int type);
-    void setFilterType(int type);
-
-    void setUIntVal(std::uint8_t &setValue, int newValue);
-    void setIntVal(int &setValue, int newValue);
-    void setFloatVal(float &setValue, float newValue);
-    void setBoolVal(bool &setValue, bool newValue);
-
+    void updateImage(const QString &folder, int value);
     void depthChanged(int newValue);
     void connectWidgets(QSlider *slider, QSpinBox *box);
-
-    // void onClearButtonClick();
-    // void onFilterButtonClick();
-    // void onRevertButtonClick();
-    // void onUploadButtonClick();
-    // void onSaveButtonClick();
 };
 #endif // MAINWINDOW_H

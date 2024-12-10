@@ -40,21 +40,12 @@ namespace {
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {};
 static constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::stringData(
     "MainWindow",
-    "setImage",
+    "updateImage",
     "",
-    "type",
-    "setFilterType",
-    "setUIntVal",
-    "std::uint8_t&",
-    "setValue",
-    "newValue",
-    "setIntVal",
-    "int&",
-    "setFloatVal",
-    "float&",
-    "setBoolVal",
-    "bool&",
+    "folder",
+    "value",
     "depthChanged",
+    "newValue",
     "connectWidgets",
     "QSlider*",
     "slider",
@@ -63,71 +54,44 @@ static constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers:
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {
-    uint offsetsAndSizes[42];
+    uint offsetsAndSizes[24];
     char stringdata0[11];
-    char stringdata1[9];
+    char stringdata1[12];
     char stringdata2[1];
-    char stringdata3[5];
-    char stringdata4[14];
-    char stringdata5[11];
-    char stringdata6[14];
-    char stringdata7[9];
+    char stringdata3[7];
+    char stringdata4[6];
+    char stringdata5[13];
+    char stringdata6[9];
+    char stringdata7[15];
     char stringdata8[9];
-    char stringdata9[10];
-    char stringdata10[5];
-    char stringdata11[12];
-    char stringdata12[7];
-    char stringdata13[11];
-    char stringdata14[6];
-    char stringdata15[13];
-    char stringdata16[15];
-    char stringdata17[9];
-    char stringdata18[7];
-    char stringdata19[10];
-    char stringdata20[4];
+    char stringdata9[7];
+    char stringdata10[10];
+    char stringdata11[4];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSMainWindowENDCLASS_t::offsetsAndSizes) + ofs), len 
 Q_CONSTINIT static const qt_meta_stringdata_CLASSMainWindowENDCLASS_t qt_meta_stringdata_CLASSMainWindowENDCLASS = {
     {
         QT_MOC_LITERAL(0, 10),  // "MainWindow"
-        QT_MOC_LITERAL(11, 8),  // "setImage"
-        QT_MOC_LITERAL(20, 0),  // ""
-        QT_MOC_LITERAL(21, 4),  // "type"
-        QT_MOC_LITERAL(26, 13),  // "setFilterType"
-        QT_MOC_LITERAL(40, 10),  // "setUIntVal"
-        QT_MOC_LITERAL(51, 13),  // "std::uint8_t&"
-        QT_MOC_LITERAL(65, 8),  // "setValue"
-        QT_MOC_LITERAL(74, 8),  // "newValue"
-        QT_MOC_LITERAL(83, 9),  // "setIntVal"
-        QT_MOC_LITERAL(93, 4),  // "int&"
-        QT_MOC_LITERAL(98, 11),  // "setFloatVal"
-        QT_MOC_LITERAL(110, 6),  // "float&"
-        QT_MOC_LITERAL(117, 10),  // "setBoolVal"
-        QT_MOC_LITERAL(128, 5),  // "bool&"
-        QT_MOC_LITERAL(134, 12),  // "depthChanged"
-        QT_MOC_LITERAL(147, 14),  // "connectWidgets"
-        QT_MOC_LITERAL(162, 8),  // "QSlider*"
-        QT_MOC_LITERAL(171, 6),  // "slider"
-        QT_MOC_LITERAL(178, 9),  // "QSpinBox*"
-        QT_MOC_LITERAL(188, 3)   // "box"
+        QT_MOC_LITERAL(11, 11),  // "updateImage"
+        QT_MOC_LITERAL(23, 0),  // ""
+        QT_MOC_LITERAL(24, 6),  // "folder"
+        QT_MOC_LITERAL(31, 5),  // "value"
+        QT_MOC_LITERAL(37, 12),  // "depthChanged"
+        QT_MOC_LITERAL(50, 8),  // "newValue"
+        QT_MOC_LITERAL(59, 14),  // "connectWidgets"
+        QT_MOC_LITERAL(74, 8),  // "QSlider*"
+        QT_MOC_LITERAL(83, 6),  // "slider"
+        QT_MOC_LITERAL(90, 9),  // "QSpinBox*"
+        QT_MOC_LITERAL(100, 3)   // "box"
     },
     "MainWindow",
-    "setImage",
+    "updateImage",
     "",
-    "type",
-    "setFilterType",
-    "setUIntVal",
-    "std::uint8_t&",
-    "setValue",
-    "newValue",
-    "setIntVal",
-    "int&",
-    "setFloatVal",
-    "float&",
-    "setBoolVal",
-    "bool&",
+    "folder",
+    "value",
     "depthChanged",
+    "newValue",
     "connectWidgets",
     "QSlider*",
     "slider",
@@ -144,7 +108,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       3,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -152,24 +116,14 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   62,    2, 0x08,    1 /* Private */,
-       4,    1,   65,    2, 0x08,    3 /* Private */,
-       5,    2,   68,    2, 0x08,    5 /* Private */,
-       9,    2,   73,    2, 0x08,    8 /* Private */,
-      11,    2,   78,    2, 0x08,   11 /* Private */,
-      13,    2,   83,    2, 0x08,   14 /* Private */,
-      15,    1,   88,    2, 0x08,   17 /* Private */,
-      16,    2,   91,    2, 0x08,   19 /* Private */,
+       1,    2,   32,    2, 0x08,    1 /* Private */,
+       5,    1,   37,    2, 0x08,    4 /* Private */,
+       7,    2,   40,    2, 0x08,    6 /* Private */,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Int,    3,
-    QMetaType::Void, QMetaType::Int,    3,
-    QMetaType::Void, 0x80000000 | 6, QMetaType::Int,    7,    8,
-    QMetaType::Void, 0x80000000 | 10, QMetaType::Int,    7,    8,
-    QMetaType::Void, 0x80000000 | 12, QMetaType::Float,    7,    8,
-    QMetaType::Void, 0x80000000 | 14, QMetaType::Bool,    7,    8,
-    QMetaType::Void, QMetaType::Int,    8,
-    QMetaType::Void, 0x80000000 | 17, 0x80000000 | 19,   18,   20,
+    QMetaType::Void, QMetaType::QString, QMetaType::Int,    3,    4,
+    QMetaType::Void, QMetaType::Int,    6,
+    QMetaType::Void, 0x80000000 | 8, 0x80000000 | 10,    9,   11,
 
        0        // eod
 };
@@ -183,28 +137,10 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSMainWindowENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
-        // method 'setImage'
+        // method 'updateImage'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
-        // method 'setFilterType'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int, std::false_type>,
-        // method 'setUIntVal'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<std::uint8_t &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int, std::false_type>,
-        // method 'setIntVal'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int, std::false_type>,
-        // method 'setFloatVal'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<float &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<float, std::false_type>,
-        // method 'setBoolVal'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
         // method 'depthChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
@@ -222,20 +158,15 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->setImage((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 1: _t->setFilterType((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 2: _t->setUIntVal((*reinterpret_cast< std::add_pointer_t<std::uint8_t&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 3: _t->setIntVal((*reinterpret_cast< std::add_pointer_t<int&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
-        case 4: _t->setFloatVal((*reinterpret_cast< std::add_pointer_t<float&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<float>>(_a[2]))); break;
-        case 5: _t->setBoolVal((*reinterpret_cast< std::add_pointer_t<bool&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[2]))); break;
-        case 6: _t->depthChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 7: _t->connectWidgets((*reinterpret_cast< std::add_pointer_t<QSlider*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QSpinBox*>>(_a[2]))); break;
+        case 0: _t->updateImage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
+        case 1: _t->depthChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 2: _t->connectWidgets((*reinterpret_cast< std::add_pointer_t<QSlider*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QSpinBox*>>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 7:
+        case 2:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -267,13 +198,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 3;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 3;
     }
     return _id;
 }

@@ -78,22 +78,26 @@ MainWindow::MainWindow()
 
     // depth section
 
-    // addPushButton(depthLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
-
     addLabel(depthLayout, "Choose Image:");
 
     QGroupBox *imageBox = new QGroupBox();
     QHBoxLayout *imageLay = new QHBoxLayout();
 
-    addRadioButton(imageLay, "Image 1", settings.currImage == IMAGE1, [this]{ setImage(IMAGE1); });
-    addRadioButton(imageLay, "Image 2", settings.currImage == IMAGE2, [this]{ setImage(IMAGE2); });
-    addRadioButton(imageLay, "Image 3", settings.currImage == IMAGE3, [this]{ setImage(IMAGE3); });
+    addRadioButton(imageLay, "Image 1", settings.currImage == IMAGE1, [this]{
+        depthSlider->setValue(0);
+        updateImage("primsalad", 0);
+    });
+    addRadioButton(imageLay, "Image 2", settings.currImage == IMAGE2, [this]{
+        depthSlider->setValue(0);
+        updateImage("image2", 0);
+    });
+    addRadioButton(imageLay, "Image 3", settings.currImage == IMAGE3, [this]{
+        depthSlider->setValue(0);
+        updateImage("image3", 0);
+    });
+
     imageBox->setLayout(imageLay);
     depthLayout->addWidget(imageBox);
-
-    // QLabel *depthLabel = new QLabel();
-    // depthLabel->setText("Depth of Field:");
-    // depthLayout->addWidget(depthLabel);
 
     addLabel(depthLayout, "Depth of Field:");
 
@@ -120,14 +124,10 @@ MainWindow::MainWindow()
 
     connectWidgets(depthSlider, depthBox);
 
-    // QLabel *imageLabel = new QLabel();
-    // depthLayout->addWidget(imageLabel);
-
-    // connect(depthSlider, &QSlider::valueChanged, depthBox, &QSpinBox::setValue);
-    // connect(depthBox, QOverload<int>::of(&QSpinBox::valueChanged), depthSlider, &QSlider::setValue);
-
     // Connect the slider to the updateImage slot
-    connect(depthSlider, &QSlider::valueChanged, this, &MainWindow::updateImage);
+    connect(depthSlider, &QSlider::valueChanged, this, [this](int value) {
+        updateImage(settings.currImagePath, value);
+    });
 
     // motion section
     // addPushButton(motionLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
@@ -314,9 +314,11 @@ void MainWindow::addCheckBox(QBoxLayout *layout, QString text, bool val, auto fu
     connect(box, &QCheckBox::clicked, this, function);
 }
 
-void MainWindow::updateImage(int value) {
-    // Construct the file path based on the slider value (assuming the images are named output_1.png, output_2.png, ..., output_100.png)
-    QString filePath = QString("/Users/efratavigdor/Desktop/CS1230/graphics-final-project/outputs/primsalad/output_%1.png").arg(value + 1);
+void MainWindow::updateImage(const QString &folder, int value) {
+    // Construct the file path based on the folder and image index
+    QString filePath = QString("/Users/efratavigdor/Desktop/CS1230/graphics-final-project/outputs/%1/output_%2.png")
+                           .arg(folder)
+                           .arg(value + 1);
 
     // Create a QImage object and attempt to load the image
     QImage myImage;
@@ -324,6 +326,10 @@ void MainWindow::updateImage(int value) {
         std::cout << "Failed to load image: " << filePath.toStdString() << std::endl;
         return;
     }
+
+    settings.currImagePath = folder;
+
+    // settings.currImage = value;
 
     // Convert the image to RGBX8888 format if needed
     myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
@@ -333,6 +339,7 @@ void MainWindow::updateImage(int value) {
     image->setFixedSize(myImage.width(), myImage.height());
     update();
 }
+
 
 
 // void MainWindow::addSlider(QSlider *slider, QSpinBox *box, QBoxLayout *layout, QString text, float tick, int min, int max, int value){
@@ -380,70 +387,39 @@ void MainWindow::connectWidgets(QSlider *slider, QSpinBox *box) {
 }
 
 void MainWindow::onTabChanged(int index) {
-    switch (index) {
-    case 0:
-        settings.depth = true;
-        settings.motion = false;
-        settings.lens = false;
-        settings.sandbox = false;
-        depthSlider->setValue(10);
-        depthBox->setValue(10);
-        break;
-    case 1:
-        settings.depth = false;
-        settings.motion = true;
-        settings.lens = false;
-        settings.sandbox = false;
-        motionSlider->setValue(5);
-        motionBox->setValue(5);
-        break;
-    case 2:
-        settings.depth = false;
-        settings.motion = false;
-        settings.lens = true;
-        settings.sandbox = false;
-        break;
-    case 3:
-        settings.depth = false;
-        settings.motion = false;
-        settings.lens = false;
-        settings.sandbox = true;
-        break;
+    // switch (index) {
+    // case 0:
+    //     settings.depth = true;
+    //     settings.motion = false;
+    //     settings.lens = false;
+    //     settings.sandbox = false;
+    //     depthSlider->setValue(10);
+    //     depthBox->setValue(10);
+    //     break;
+    // case 1:
+    //     settings.depth = false;
+    //     settings.motion = true;
+    //     settings.lens = false;
+    //     settings.sandbox = false;
+    //     motionSlider->setValue(5);
+    //     motionBox->setValue(5);
+    //     break;
+    // case 2:
+    //     settings.depth = false;
+    //     settings.motion = false;
+    //     settings.lens = true;
+    //     settings.sandbox = false;
+    //     break;
+    // case 3:
+    //     settings.depth = false;
+    //     settings.motion = false;
+    //     settings.lens = false;
+    //     settings.sandbox = true;
+    //     break;
 
-    default:
-        break;
-    }
+    // default:
+    //     break;
+    // }
 }
 
-
-
-void MainWindow::setImage(int type) {
-    // settings.brushType = type;
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::setFilterType(int type) {
-    // settings.filterType = type;
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::setUIntVal(std::uint8_t &setValue, int newValue) {
-    // setValue = newValue;
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::setIntVal(int &setValue, int newValue) {
-    // setValue = newValue;
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::setFloatVal(float &setValue, float newValue) {
-    // setValue = newValue;
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::setBoolVal(bool &setValue, bool newValue) {
-    // setValue = newValue;
-    // m_canvas->settingsChanged();
-}
 
