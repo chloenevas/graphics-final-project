@@ -84,8 +84,6 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 int samples = 6;  // Increased for better quality
 
                 for (int s = 0; s < samples; ++s) {
-                    float time = static_cast<float>(arc4random()) / RAND_MAX;
-
                     float aspectRatio = camera.getAspectRatio();
 
                     // Add small random offset to pixel coordinates for anti-aliasing
@@ -122,17 +120,19 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                     glm::vec3 rayOrigin = cameraPos + offset;
                     glm::vec3 finalRayDirection = glm::normalize(focalPoint - rayOrigin);
 
-                    color += traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth, time);
+                    // dummy unused value for time
+                    color += traceRay(scene, root, rayOrigin, finalRayDirection, maxDepth, 0);
                 }
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
-            } else {
-
+            } else if (m_config.enableMotionBlur) {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                int samples = 5;
+                int samples = 15;
                 for (int s = 0; s < samples; ++s) {
+
+                    // get a randopm time within the shutter open and close - start at t = 0 end at t = 1
                     float time = (s + static_cast<float>(rand()) / RAND_MAX) / samples;
 
                     color += traceRay(scene, root, eyePoint, d, maxDepth, time);
@@ -140,6 +140,15 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
+            }
+            else {
+
+                glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
+                                                 glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+
+                // dummy unused value for time
+                color = traceRay(scene, root, eyePoint, d, maxDepth, 0);
+
             }
             RGBA finalColor;
             finalColor.r = static_cast<std::uint8_t>(color.r * 255.0f);
@@ -213,6 +222,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                 float shadowT;
                 glm::vec3 shadowIntersection;
 
+                // calculate shadows based on the shape's position at time = 0
                 if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
                     float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
 

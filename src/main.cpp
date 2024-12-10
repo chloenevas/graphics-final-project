@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
     rtConfig.enableSuperSample   = settings.value("Feature/super-sample").toBool();
     rtConfig.enableAcceleration  = settings.value("Feature/acceleration").toBool();
     rtConfig.enableDepthOfField  = settings.value("Feature/depthoffield").toBool();
+    rtConfig.enableMotionBlur  = settings.value("Feature/motion-blur").toBool();
     rtConfig.maxRecursiveDepth   = settings.value("Settings/maximum-recursive-depth").toInt();
     rtConfig.onlyRenderNormals   = settings.value("Settings/only-render-normals").toBool();
 

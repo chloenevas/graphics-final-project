@@ -27,6 +27,7 @@ public:
         bool enableSuperSample   = false;
         bool enableAcceleration  = false;
         bool enableDepthOfField  = true;
+        bool enableMotionBlur = true;
         int maxRecursiveDepth    = 4;
         bool onlyRenderNormals   = false;
         bool samples_per_pixel = 100;
