@@ -9,6 +9,8 @@
 #include <QTabWidget>
 #include <QScrollArea>
 #include <QCheckBox>
+#include <QPainter>
+#include <QMessageBox>
 
 MainWindow::MainWindow()
 {
@@ -96,13 +98,13 @@ MainWindow::MainWindow()
     depthSlider = new QSlider(Qt::Horizontal);
     depthSlider->setTickInterval(1);
     depthSlider->setMinimum(0);
-    depthSlider->setMaximum(20);
+    depthSlider->setMaximum(100);
     depthSlider->setValue(0);
     depthLayout->addWidget(depthSlider);
 
     depthBox = new QSpinBox();
     depthBox->setMinimum(0);
-    depthBox->setMaximum(20);
+    depthBox->setMaximum(100);
     depthBox->setSingleStep(1);
     depthBox->setValue(0);
 
@@ -113,9 +115,17 @@ MainWindow::MainWindow()
 
     connectWidgets(depthSlider, depthBox);
 
-    // motion section
+    // QLabel *imageLabel = new QLabel();
+    // depthLayout->addWidget(imageLabel);
 
-    addPushButton(motionLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    // connect(depthSlider, &QSlider::valueChanged, depthBox, &QSpinBox::setValue);
+    // connect(depthBox, QOverload<int>::of(&QSpinBox::valueChanged), depthSlider, &QSlider::setValue);
+
+    // Connect the slider to the updateImage slot
+    connect(depthSlider, &QSlider::valueChanged, this, &MainWindow::updateImage);
+
+    // motion section
+    // addPushButton(motionLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
 
     QLabel *motionLabel = new QLabel();
     motionLabel->setText("Motion Blur Sensitivity:");
@@ -146,11 +156,11 @@ MainWindow::MainWindow()
 
     // lens section
 
-    addPushButton(lensLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    // addPushButton(lensLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
 
     // sandbox section
 
-    addPushButton(freeLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    // addPushButton(freeLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
 
 
     // // brush selection
@@ -299,6 +309,27 @@ void MainWindow::addCheckBox(QBoxLayout *layout, QString text, bool val, auto fu
     connect(box, &QCheckBox::clicked, this, function);
 }
 
+void MainWindow::updateImage(int value) {
+    // Construct the file path based on the slider value (assuming the images are named output_1.png, output_2.png, ..., output_100.png)
+    QString filePath = QString("/Users/efratavigdor/Desktop/CS1230/graphics-final-project/outputs/primsalad/output_%1.png").arg(value + 1);
+
+    // Create a QImage object and attempt to load the image
+    QImage myImage;
+    if (!myImage.load(filePath)) {
+        std::cout << "Failed to load image: " << filePath.toStdString() << std::endl;
+        return;
+    }
+
+    // Convert the image to RGBX8888 format if needed
+    myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
+
+    // Display the image directly from the QImage object
+    setPixmap(QPixmap::fromImage(myImage));
+    setFixedSize(myImage.width(), myImage.height());
+    update();
+}
+
+
 // void MainWindow::addSlider(QSlider *slider, QSpinBox *box, QBoxLayout *layout, QString text, float tick, int min, int max, int value){
 //     QLabel *label = new QLabel();
 //     label->setText(text);
@@ -411,44 +442,3 @@ void MainWindow::setBoolVal(bool &setValue, bool newValue) {
     // m_canvas->settingsChanged();
 }
 
-
-// ------ PUSH BUTTON FUNCTIONS ------
-
-void MainWindow::onClearButtonClick() {
-    // m_canvas->resize(m_canvas->parentWidget()->size().width(), m_canvas->parentWidget()->size().height());
-    // m_canvas->clearCanvas();
-}
-
-void MainWindow::onFilterButtonClick() {
-    // m_canvas->filterImage();
-}
-
-void MainWindow::onRevertButtonClick() {
-    // m_canvas->loadImageFromFile(settings.imagePath);
-}
-
-void MainWindow::onUploadButtonClick() {
-    // Get new image path selected by user
-    QString file = QFileDialog::getOpenFileName(this, tr("Open Image"), QDir::homePath(), tr("Image Files (*.json)"));
-    if (file.isEmpty()) { return; }
-
-
-
-
-
-    // settings.imagePath = file;
-
-    // Display new image
-    // m_canvas->loadImageFromFile(settings.imagePath);
-
-    // m_canvas->settingsChanged();
-}
-
-void MainWindow::onSaveButtonClick() {
-    // Get new image path selected by user
-    QString file = QFileDialog::getSaveFileName(this, tr("Save Image"), QDir::currentPath(), tr("Image Files (*.png *.jpg *.jpeg)"));
-    if (file.isEmpty()) { return; }
-
-    // Save image
-    // m_canvas->saveImageToFile(file);
-}

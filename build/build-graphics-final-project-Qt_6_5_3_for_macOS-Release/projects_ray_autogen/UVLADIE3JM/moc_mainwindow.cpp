@@ -59,16 +59,11 @@ static constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers:
     "QSlider*",
     "slider",
     "QSpinBox*",
-    "box",
-    "onClearButtonClick",
-    "onFilterButtonClick",
-    "onRevertButtonClick",
-    "onUploadButtonClick",
-    "onSaveButtonClick"
+    "box"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {
-    uint offsetsAndSizes[52];
+    uint offsetsAndSizes[42];
     char stringdata0[11];
     char stringdata1[9];
     char stringdata2[1];
@@ -90,11 +85,6 @@ struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {
     char stringdata18[7];
     char stringdata19[10];
     char stringdata20[4];
-    char stringdata21[19];
-    char stringdata22[20];
-    char stringdata23[20];
-    char stringdata24[20];
-    char stringdata25[18];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSMainWindowENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -120,12 +110,7 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSMainWindowENDCLASS_t qt_meta_st
         QT_MOC_LITERAL(162, 8),  // "QSlider*"
         QT_MOC_LITERAL(171, 6),  // "slider"
         QT_MOC_LITERAL(178, 9),  // "QSpinBox*"
-        QT_MOC_LITERAL(188, 3),  // "box"
-        QT_MOC_LITERAL(192, 18),  // "onClearButtonClick"
-        QT_MOC_LITERAL(211, 19),  // "onFilterButtonClick"
-        QT_MOC_LITERAL(231, 19),  // "onRevertButtonClick"
-        QT_MOC_LITERAL(251, 19),  // "onUploadButtonClick"
-        QT_MOC_LITERAL(271, 17)   // "onSaveButtonClick"
+        QT_MOC_LITERAL(188, 3)   // "box"
     },
     "MainWindow",
     "setImage",
@@ -147,12 +132,7 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSMainWindowENDCLASS_t qt_meta_st
     "QSlider*",
     "slider",
     "QSpinBox*",
-    "box",
-    "onClearButtonClick",
-    "onFilterButtonClick",
-    "onRevertButtonClick",
-    "onUploadButtonClick",
-    "onSaveButtonClick"
+    "box"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -164,7 +144,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -172,19 +152,14 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   92,    2, 0x08,    1 /* Private */,
-       4,    1,   95,    2, 0x08,    3 /* Private */,
-       5,    2,   98,    2, 0x08,    5 /* Private */,
-       9,    2,  103,    2, 0x08,    8 /* Private */,
-      11,    2,  108,    2, 0x08,   11 /* Private */,
-      13,    2,  113,    2, 0x08,   14 /* Private */,
-      15,    1,  118,    2, 0x08,   17 /* Private */,
-      16,    2,  121,    2, 0x08,   19 /* Private */,
-      21,    0,  126,    2, 0x08,   22 /* Private */,
-      22,    0,  127,    2, 0x08,   23 /* Private */,
-      23,    0,  128,    2, 0x08,   24 /* Private */,
-      24,    0,  129,    2, 0x08,   25 /* Private */,
-      25,    0,  130,    2, 0x08,   26 /* Private */,
+       1,    1,   62,    2, 0x08,    1 /* Private */,
+       4,    1,   65,    2, 0x08,    3 /* Private */,
+       5,    2,   68,    2, 0x08,    5 /* Private */,
+       9,    2,   73,    2, 0x08,    8 /* Private */,
+      11,    2,   78,    2, 0x08,   11 /* Private */,
+      13,    2,   83,    2, 0x08,   14 /* Private */,
+      15,    1,   88,    2, 0x08,   17 /* Private */,
+      16,    2,   91,    2, 0x08,   19 /* Private */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::Int,    3,
@@ -195,17 +170,12 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
     QMetaType::Void, 0x80000000 | 14, QMetaType::Bool,    7,    8,
     QMetaType::Void, QMetaType::Int,    8,
     QMetaType::Void, 0x80000000 | 17, 0x80000000 | 19,   18,   20,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
 
        0        // eod
 };
 
 Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
-    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
+    QMetaObject::SuperData::link<QLabel::staticMetaObject>(),
     qt_meta_stringdata_CLASSMainWindowENDCLASS.offsetsAndSizes,
     qt_meta_data_CLASSMainWindowENDCLASS,
     qt_static_metacall,
@@ -241,17 +211,7 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         // method 'connectWidgets'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QSlider *, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QSpinBox *, std::false_type>,
-        // method 'onClearButtonClick'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'onFilterButtonClick'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'onRevertButtonClick'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'onUploadButtonClick'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'onSaveButtonClick'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>
+        QtPrivate::TypeAndForceComplete<QSpinBox *, std::false_type>
     >,
     nullptr
 } };
@@ -270,11 +230,6 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 5: _t->setBoolVal((*reinterpret_cast< std::add_pointer_t<bool&>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<bool>>(_a[2]))); break;
         case 6: _t->depthChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 7: _t->connectWidgets((*reinterpret_cast< std::add_pointer_t<QSlider*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QSpinBox*>>(_a[2]))); break;
-        case 8: _t->onClearButtonClick(); break;
-        case 9: _t->onFilterButtonClick(); break;
-        case 10: _t->onRevertButtonClick(); break;
-        case 11: _t->onUploadButtonClick(); break;
-        case 12: _t->onSaveButtonClick(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -303,22 +258,22 @@ void *MainWindow::qt_metacast(const char *_clname)
     if (!_clname) return nullptr;
     if (!strcmp(_clname, qt_meta_stringdata_CLASSMainWindowENDCLASS.stringdata0))
         return static_cast<void*>(this);
-    return QWidget::qt_metacast(_clname);
+    return QLabel::qt_metacast(_clname);
 }
 
 int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QLabel::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 13)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 13)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 13;
+        _id -= 8;
     }
     return _id;
 }

@@ -13,7 +13,7 @@
 
 #include "raytracer/raytracer.h"
 
-class MainWindow : public QWidget
+class MainWindow : public QLabel
 {
     Q_OBJECT
 
@@ -38,6 +38,7 @@ private:
     void addCheckBox(QBoxLayout *layout, QString text, bool value, auto function);
     void addSlider(QSlider *slider, QSpinBox *box, QBoxLayout *layout, QString text, float tick, int min, int max, int value);
     void onTabChanged(int index);
+    void updateImage(int value);
 
 private slots:
     void setImage(int type);
@@ -51,10 +52,10 @@ private slots:
     void depthChanged(int newValue);
     void connectWidgets(QSlider *slider, QSpinBox *box);
 
-    void onClearButtonClick();
-    void onFilterButtonClick();
-    void onRevertButtonClick();
-    void onUploadButtonClick();
-    void onSaveButtonClick();
+    // void onClearButtonClick();
+    // void onFilterButtonClick();
+    // void onRevertButtonClick();
+    // void onUploadButtonClick();
+    // void onSaveButtonClick();
 };
 #endif // MAINWINDOW_H
