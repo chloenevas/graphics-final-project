@@ -1,0 +1,15 @@
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/projects_ray.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/edit_cache.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/rebuild_cache.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/list_install_components.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/install.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/install/local.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/install/strip.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/projects_ray_autogen_timestamp_deps.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/CMakeFiles/projects_ray_autogen.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/edit_cache.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/rebuild_cache.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/list_install_components.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/install.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/install/local.dir
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/build/glm/CMakeFiles/install/strip.dir

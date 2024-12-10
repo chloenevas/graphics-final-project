@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -9,8 +8,11 @@ Camera::Camera(int width, int height, const RenderData &metaData)
     m_aspectRatio(static_cast<float>(width) / height),
     m_heightAngle(metaData.cameraData.heightAngle),
     m_widthAngle(m_heightAngle*m_aspectRatio),
-    m_focalLength(1.0f),
-    m_aperture(metaData.cameraData.aperture) {}
+    m_focalLength(metaData.cameraData.focalLength),
+    m_aperture(metaData.cameraData.aperture),
+    m_position(glm::vec3(metaData.cameraData.pos)),
+    m_look(metaData.cameraData.look),
+    m_up(metaData.cameraData.up){}
 
 glm::mat4 Camera::calcViewMatrix(glm::vec3 pos, glm::vec3 look, glm::vec3 up) {
     glm::vec3 w = glm::normalize(-look);
@@ -54,6 +56,14 @@ float Camera::getHeightAngle() const {
 
 float Camera::getWidthAngle() const {
     return m_widthAngle;
+}
+
+glm::vec3 Camera::getLook() const {
+    return m_look;
+}
+
+glm::vec3 Camera::getUp() const {
+    return m_up;
 }
 
 // Getter for focal length (optional, for depth of field)

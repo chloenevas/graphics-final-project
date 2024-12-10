@@ -22,7 +22,7 @@ struct Settings {
     bool lens = false;
     bool sandbox = false;
 
-    int currImage = IMAGE1;
+    int currImage = IMAGE2;
 
     // bool image1;
     // bool image2;

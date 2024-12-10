@@ -22,7 +22,7 @@ public:
 
 private:
     void setupCanvas2D();
-    RayTracer *raytracer;
+    QLabel *image;
 
     QSlider *depthSlider;
     QSlider *motionSlider;

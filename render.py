@@ -718,10 +718,11 @@ super-sample = false
 num-samples = 1
 post-process = false
 acceleration = false
-depthoffield = false
-motion = false
-lens = false
+depthoffield = true
 """
+
+# motion = false
+# lens = false
 
 scene_output_dir = "/Users/efratavigdor/Desktop/CS1230/graphics-final-project/scenefiles/primsalad"
 ini_output_dir = "/Users/efratavigdor/Desktop/CS1230/graphics-final-project/inifiles/primsalad"
@@ -733,10 +734,10 @@ os.makedirs(ini_output_dir, exist_ok=True)
 os.makedirs(output_dir_for_ini, exist_ok=True)  # This is for consistency if the path is used later
 
 # Generate 100 files with varying aperture settings
-for i in range(100):
+for i in range(20):
     # Update the scene file
     scene = base_scene.copy()
-    scene["cameraData"]["aperture"] = 8 + (7 / 99) * i  # Linearly interpolate from 8 to 15
+    scene["cameraData"]["focalLength"] = 9 + (4 / 20) * i  # Linearly interpolate from 8 to 15
     scene_file_name = os.path.join(scene_output_dir, f"scene_{i + 1}.json")
     with open(scene_file_name, "w") as f:
         json.dump(scene, f, indent=2)
@@ -751,4 +752,4 @@ for i in range(100):
     with open(ini_file_name, "w") as f:
         f.write(ini_content)
 
-print(f"100 scene and ini files generated in '{scene_output_dir}' and '{ini_output_dir}'")
+print(f"20 scene and ini files generated in '{scene_output_dir}' and '{ini_output_dir}'")

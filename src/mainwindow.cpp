@@ -32,9 +32,14 @@ MainWindow::MainWindow()
 
     // makes the canvas into a scroll area
     QScrollArea *scrollArea = new QScrollArea();
-    // scrollArea->setWidget(raytracer);
     scrollArea->setWidgetResizable(true);
     hLayout->addWidget(scrollArea, 1);
+
+    image = new QLabel();
+    image->setAlignment(Qt::AlignCenter); // Center the image in the label
+
+    // Set the QLabel as the widget of the scroll area
+    scrollArea->setWidget(image);
 
     // groupings by project
     QWidget *depthGroup = new QWidget();
@@ -98,13 +103,13 @@ MainWindow::MainWindow()
     depthSlider = new QSlider(Qt::Horizontal);
     depthSlider->setTickInterval(1);
     depthSlider->setMinimum(0);
-    depthSlider->setMaximum(100);
+    depthSlider->setMaximum(20);
     depthSlider->setValue(0);
     depthLayout->addWidget(depthSlider);
 
     depthBox = new QSpinBox();
     depthBox->setMinimum(0);
-    depthBox->setMaximum(100);
+    depthBox->setMaximum(20);
     depthBox->setSingleStep(1);
     depthBox->setValue(0);
 
@@ -324,8 +329,8 @@ void MainWindow::updateImage(int value) {
     myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
 
     // Display the image directly from the QImage object
-    setPixmap(QPixmap::fromImage(myImage));
-    setFixedSize(myImage.width(), myImage.height());
+    image->setPixmap(QPixmap::fromImage(myImage));
+    image->setFixedSize(myImage.width(), myImage.height());
     update();
 }
 

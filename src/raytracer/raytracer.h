@@ -1,20 +1,12 @@
+
 #pragma once
-
-#ifdef __APPLE__
-#define GL_SILENCE_DEPRECATION
-#endif
-#include <glm/glm.hpp>
-
-#include "utils/sceneparser.h"
-#include "camera/camera.h"
-#include <QLabel>
 
 #include <glm/glm.hpp>
 #include "utils/rgba.h"
 #include "utils/shape.h"
 #include "raytracescene.h"
 #include "kdtree.h"
-
+#include <random>
 
 // A forward declaration for the RaytraceScene class
 
@@ -22,7 +14,7 @@ class RayTraceScene;
 
 // A class representing a ray-tracer
 
-class RayTracer : public QWidget
+class RayTracer
 {
 public:
     struct Config {
@@ -34,9 +26,10 @@ public:
         bool enableParallelism   = false;
         bool enableSuperSample   = false;
         bool enableAcceleration  = false;
-        bool enableDepthOfField  = false;
+        bool enableDepthOfField  = true;
         int maxRecursiveDepth    = 4;
         bool onlyRenderNormals   = false;
+        bool samples_per_pixel = 100;
     };
 
 public:
@@ -50,17 +43,10 @@ public:
     // @param scene The scene to be rendered.
     void render(RGBA *imageData, const RayTraceScene &scene);
 
-    RGBA superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                             const Camera &camera, const glm::vec3 &eyePoint, int maxDepth);
+    glm::vec4 traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
 
-    RGBA traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
-
-    float calculateColorVariance(RGBA samples[4]);
-
-    RGBA averageColor(RGBA samples[4]);
 
 private:
     const Config m_config;
     KdTree kdTree;
 };
-

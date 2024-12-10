@@ -21,7 +21,7 @@ if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "
   export PATH="$QT_BIN_DIR:$PATH"
 fi
 
-BUILD_PROJECT_DIR=$(find build -type d -name "build-projects-*-Release" -print -quit)
+BUILD_PROJECT_DIR=$(find build -type d -name "build-graphics-final-project-*-Release" -print -quit)
 
 if [ -z "$BUILD_PROJECT_DIR" ]; then
   echo "Error: Build directory for the project not found."
@@ -29,7 +29,7 @@ if [ -z "$BUILD_PROJECT_DIR" ]; then
 fi
 
 EXECUTABLE_PATH="$BUILD_PROJECT_DIR/projects_ray"
-INI_FILE="inifile/primsalad/scene_1.ini"
+INI_FILE="/inifile/primsalad/scene_1.ini"
 
 for INI_FILE in inifiles/primsalad/*.ini; do
   if [ -x "$EXECUTABLE_PATH" ] || [ -f "$EXECUTABLE_PATH.exe" ]; then
