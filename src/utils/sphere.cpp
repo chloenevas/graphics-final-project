@@ -14,14 +14,8 @@ glm::vec3 Sphere::calcNormal(const glm::vec3 point) {
     // Calculate normal in object space
     glm::vec3 objectSpaceNormal = glm::normalize(objectSpacePoint);
 
-    glm::vec3 n = glm::normalize(glm::vec3(glm::transpose(m_inverseCTM) * glm::vec4(objectSpaceNormal, 0.0f)));
-
     // Transform normal back to world space using the transpose of the inverse of CTM
-    // if (m_isLens && m_radius > 0) {
-    //     return -n;
-    // }
-
-    return n;
+    return glm::normalize(glm::vec3(glm::transpose(m_inverseCTM) * glm::vec4(objectSpaceNormal, 0.0f)));
 }
 
 // Method to calculate the intersection with a ray
@@ -40,7 +34,7 @@ bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDire
         float t2 = (-b - sqrt(discriminant)) / (2.0f * a);
 
         if (m_isLens) {
-            t = (m_radius < 0) ? glm::min(t1, t2) : glm::max(t1, t2);
+            t = m_radius < 0 ? glm::min(t1, t2) : glm::max(t1, t2);
             if (t < 0) {
                 return false;
             }
