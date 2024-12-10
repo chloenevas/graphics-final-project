@@ -43,7 +43,7 @@ const glm::vec3 RayTraceScene::getPoint(float r, float c, const Camera& camera) 
 
     float x = xNorm * viewPlaneWidth;
     float y = yNorm * viewPlaneHeight;
-    float z = -camera.getFocalLength();
+    float z = -camera.getFocalLength();  // This is our focal plane distance
 
     return glm::vec3(x, y, z);
 }

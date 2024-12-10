@@ -117,48 +117,101 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
     // arbitrary depth value, can change
     int maxDepth = 3;
 
-    for (int r = 0; r < scene.height(); r ++) {
-        for (int c = 0; c < scene.width(); c ++) {
-            imageData[r * scene.width() + c] = superSamp(r, c, 1.0f, scene, root, camera, eyePoint, maxDepth);
+    int imageWidth = scene.width();
+    int imageHeight = scene.height();
+
+    for (int r = 0; r < imageHeight; r ++) {
+        for (int c = 0; c < imageWidth; c ++) {
+            RGBA color = {0,0,0,0};
+            if (m_config.enableDepthOfField){
+                // Number of samples per pixel (adjust based on your needs)
+                int samples = m_config.enableDepthOfField ? 100 : 1;
+
+                // Generate multiple samples per pixel for DOF effect
+                for (int s = 0; s < samples; ++s) {
+                    // Initialize ray directly with the result from generation
+
+                    float aspectRatio = camera.getAspectRatio();
+
+                    // Convert pixel coordinates to normalized image space coordinates
+                    float imageSpaceCoordX = (static_cast<float>(c) + 0.5f) / static_cast<float>(imageWidth);
+                    float imageSpaceCoordY = (static_cast<float>(r) + 0.5f) / static_cast<float>(imageHeight);
+
+                    // Range coordinates from -1 to 1
+                    float multiplierX = 2.0f * imageSpaceCoordX - 1.0f;
+                    float multiplierY = 1.0f - 2.0f * imageSpaceCoordY;
+
+                    // Compute the height and width of the viewplane based on the height angle
+                    float viewplaneHeight = 2.0f * tan(camera.getHeightAngle() / 2.0f);
+                    float viewplaneWidth = aspectRatio * viewplaneHeight;
+
+                    // Camera coordinate system
+                    glm::vec3 cameraPos = glm::vec3(camera.getPosition());
+                    glm::vec3 cameraLook = glm::normalize(glm::vec3(camera.getLook()));
+                    glm::vec3 cameraUpInitial = glm::normalize(glm::vec3(camera.getUp()));
+                    glm::vec3 cameraRight = glm::normalize(glm::cross(cameraLook, cameraUpInitial));
+                    glm::vec3 cameraUp = glm::normalize(glm::cross(cameraRight, cameraLook));
+
+                    // Compute the center of the viewplane
+                    glm::vec3 viewplaneCenter = cameraPos + cameraLook;
+
+                    // Compute the horizontal and vertical offsets
+                    glm::vec3 horizontal = (viewplaneWidth / 2.0f) * cameraRight;
+                    glm::vec3 vertical = (viewplaneHeight / 2.0f) * cameraUp;
+
+                    // Compute the point on the viewplane corresponding to the pixel
+                    glm::vec3 viewplanePoint = viewplaneCenter + (multiplierX * horizontal) + (multiplierY * vertical);
+
+                    // Calculate original ray direction
+                    glm::vec3 rayDirection = glm::normalize(viewplanePoint - cameraPos);
+
+                    // Calculate the focal point
+                    glm::vec3 focalPoint = cameraPos + camera.getFocalLength() * rayDirection;
+
+                    // Generate random point in defocus disk
+                    glm::vec3 randomDiskPoint = camera.random_in_unit_disk();
+                    glm::vec3 offset = (camera.getAperture() / 2.0f) *
+                                       (randomDiskPoint.x * cameraRight + randomDiskPoint.y * cameraUp);
+
+                    // Create ray from offset origin through focal point
+                    eyePoint = cameraPos + offset;
+                    glm::vec3 d = glm::normalize(focalPoint - eyePoint);
+
+                    color += traceRay(scene, root, eyePoint, d, maxDepth);
+                }
+
+                // Average the samples
+                color /= static_cast<float>(samples);
+            }else{
+                glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+                color = traceRay(scene, root, eyePoint, d, maxDepth);
+            }
+            imageData[r * scene.width() + c] = color;
         }
     }
 }
 
-RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                                    const Camera &camera, const glm::vec3 &eyePoint, int maxDepth) {
-    float halfPixel = pixelSize / 2.0f;
+RGBA RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
 
-    glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
+    const Camera& camera = scene.getCamera();
 
-    // arbitrary threshold value, can change
-    float threshold = 0.1;
+    // glm::vec3 rayOrigin;
+    // glm::vec3 rayDirection;
 
-    RGBA samples[4] = {
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.25, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.25, c + pixelSize * 0.75, scene, root, eyePoint, d, 0),
-        traceRay(r + pixelSize * 0.75, c + pixelSize * 0.75, scene, root, eyePoint, d, 0)
-    };
+    // if (camera.getAperture() > 0.0f) {
+    //     // Calculate the focal point first
+    //     glm::vec3 focalPoint = eyePoint + d * camera.getFocalLength();
 
-    float variance = calculateColorVariance(samples);
+    //     // Get the new ray origin with defocus blur
+    //     rayOrigin = camera.getRayOrigin();
 
-    if (variance < threshold || maxDepth == 0) {
-        return averageColor(samples);
-    }
-
-    RGBA subSamples[4] = {
-        superSamp(r, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1),
-        superSamp(r + halfPixel, c, halfPixel, scene, root, camera, eyePoint, maxDepth - 1),
-        superSamp(r, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1),
-        superSamp(r + halfPixel, c + halfPixel, halfPixel, scene, root, camera, eyePoint, maxDepth - 1)
-    };
-
-    return averageColor(subSamples);
-}
-
-
-RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root,
-                        const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth) {
+    //     // The ray direction is from the new origin to the focal point
+    //     rayDirection = glm::normalize(focalPoint - rayOrigin);
+    // } else {
+    //     // If no depth of field (aperture = 0), use original ray parameters
+    //     rayOrigin = eyePoint;
+    //     rayDirection = d;
+    // }
 
     float closestT = std::numeric_limits<float>::max();
     glm::vec3 closestIntersection;
@@ -183,7 +236,6 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
 
     if (closestShape != nullptr) {
         glm::vec3 normal = closestShape->calcNormal(closestIntersection);
-
         const float epsilon = 1e-2f;
         glm::vec3 offsetIntersection = closestIntersection + epsilon * normal;
         glm::vec3 directionToCamera = glm::normalize(-d);
@@ -192,7 +244,6 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         glm::vec4 illumination = glm::vec4(ambient, 1.0f);
 
         for (const SceneLightData &light : scene.getLights()) {
-
             glm::vec3 lightDirection;
             float maxDistance = std::numeric_limits<float>::max();
 
@@ -230,7 +281,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         if (reflectivity.r > 0.0f || reflectivity.g > 0.0f || reflectivity.b > 0.0f) {
             if (currentDepth < 4){
             glm::vec3 reflectionDir = glm::reflect(d, normal);
-            RGBA reflectionColor = traceRay(r, c, scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
+            RGBA reflectionColor = traceRay(scene, root, offsetIntersection, reflectionDir, currentDepth + 1);
 
             illumination += glm::vec4(
                 scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
@@ -261,7 +312,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
             }
 
             glm::vec3 refOffset = closestIntersection + epsilon * T;
-            RGBA refractionColor = traceRay(r, c, scene, root, refOffset, T, currentDepth + 1);
+            RGBA refractionColor = traceRay(scene, root, refOffset, T, currentDepth + 1);
 
             illumination.r = glm::mix(illumination.r, refractionColor.r / 255.0f, transparency.r * scene.getGlobalData().kt);
             illumination.g = glm::mix(illumination.g, refractionColor.g / 255.0f, transparency.g * scene.getGlobalData().kt);

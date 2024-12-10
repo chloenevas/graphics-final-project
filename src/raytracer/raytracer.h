@@ -5,6 +5,7 @@
 #include "utils/shape.h"
 #include "raytracescene.h"
 #include "kdtree.h"
+#include <random>
 
 // A forward declaration for the RaytraceScene class
 
@@ -24,9 +25,10 @@ public:
         bool enableParallelism   = false;
         bool enableSuperSample   = false;
         bool enableAcceleration  = false;
-        bool enableDepthOfField  = false;
+        bool enableDepthOfField  = true;
         int maxRecursiveDepth    = 4;
         bool onlyRenderNormals   = false;
+        bool samples_per_pixel = 100;
     };
 
 public:
@@ -40,10 +42,7 @@ public:
     // @param scene The scene to be rendered.
     void render(RGBA *imageData, const RayTraceScene &scene);
 
-    RGBA superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                             const Camera &camera, const glm::vec3 &eyePoint, int maxDepth);
-
-    RGBA traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
+    RGBA traceRay(const RayTraceScene &scene, KdTree::KdNode* root, const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth);
 
     float calculateColorVariance(RGBA samples[4]);
 
