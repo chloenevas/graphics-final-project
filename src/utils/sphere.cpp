@@ -2,12 +2,12 @@
 #include "imagereader.h"
 #include <iostream>
 
-Sphere::Sphere(const glm::mat4& ctm, const SceneMaterial& material, const Image* image)
-    : Shape(ctm, material, image), m_center(0,0,0), m_radius(0.5f) {
+Sphere::Sphere(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
+    : Shape(ctm, material, velocity, image), m_center(0,0,0), m_radius(0.5f) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
-glm::vec3 Sphere::calcNormal(const glm::vec3 point, float time) {
+glm::vec3 Sphere::calcNormal(const glm::vec3 point) {
     // Transform point back to object space
     glm::vec3 objectSpacePoint = glm::vec3(m_inverseCTM * glm::vec4(point, 1.0f));
 
@@ -25,7 +25,7 @@ bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDire
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
 
     // calculate vector from ray origin to moving sphere's center
-    glm::vec3 movingCenter = m_center + time * glm::vec3(0.0f, 0.45f, 0.0f);
+    glm::vec3 movingCenter = m_center + time * m_velocity;
     P = P - movingCenter;
 
     float a = glm::dot(d, d);

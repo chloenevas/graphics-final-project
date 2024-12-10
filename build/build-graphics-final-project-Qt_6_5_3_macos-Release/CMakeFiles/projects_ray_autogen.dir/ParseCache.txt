@@ -3,9 +3,9 @@
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/scenefilereader.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/cube.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/imagereader.cpp
-/Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/lightmodel.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/cylinder.h
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/sphere.cpp
+/Users/chloenevas/Documents/cs1230/graphics-final-project/src/utils/lightmodel.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/raytracer/raytracescene.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/raytracer/kdtree.cpp
 /Users/chloenevas/Documents/cs1230/graphics-final-project/src/raytracer/raytracer.cpp

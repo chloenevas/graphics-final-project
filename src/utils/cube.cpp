@@ -2,12 +2,12 @@
 #include <limits>
 #include <iostream>
 
-Cube::Cube(const glm::mat4& ctm, const SceneMaterial& material, const Image* image)
-    : Shape(ctm, material, image), m_center(glm::vec3(0,0,0)), m_length(1.0f) {
+Cube::Cube(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
+    : Shape(ctm, material, velocity, image), m_center(glm::vec3(0,0,0)), m_length(1.0f) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
-glm::vec3 Cube::calcNormal(const glm::vec3 point, float time) {
+glm::vec3 Cube::calcNormal(const glm::vec3 point) {
     glm::vec3 transformedPoint = glm::vec3(m_inverseCTM * glm::vec4(point, 1.0f));
 
     glm::vec3 objectNormal;
@@ -32,7 +32,7 @@ bool Cube::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirect
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
 
     // calculate vector from ray origin to moving sphere's center
-    glm::vec3 movingCenter = m_center + time * glm::vec3(0.0f, 0.25f, 0.0f);
+    glm::vec3 movingCenter = m_center + time * m_velocity;
     P = P - movingCenter;
 
     float tMin = std::numeric_limits<float>::infinity();

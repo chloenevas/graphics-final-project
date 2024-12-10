@@ -31,6 +31,8 @@ std::vector<Shape*> RayTracer::makeShapes(const std::vector<RenderShapeData>& sh
     for (const auto& object : shapeData) {
         const glm::mat4& ctm = object.ctm;
         const SceneMaterial& material = object.primitive.material;
+        const glm::vec3 velocity = object.primitive.velocity;
+
         Image* image;
         if (material.textureMap.isUsed){
             image = loadImageFromFile(material.textureMap.filename);
@@ -41,16 +43,16 @@ std::vector<Shape*> RayTracer::makeShapes(const std::vector<RenderShapeData>& sh
 
         switch (object.primitive.type) {
         case PrimitiveType::PRIMITIVE_SPHERE:
-            shapes.push_back(new Sphere(ctm, material, image));
+            shapes.push_back(new Sphere(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CUBE:
-            shapes.push_back(new Cube(ctm, material, image));
+            shapes.push_back(new Cube(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CONE:
-            shapes.push_back(new Cone(ctm, material, image));
+            shapes.push_back(new Cone(ctm, material, velocity, image));
             break;
         case PrimitiveType::PRIMITIVE_CYLINDER:
-            shapes.push_back(new Cylinder(ctm, material, image));
+            shapes.push_back(new Cylinder(ctm, material, velocity, image));
             break;
         default:
             break;
@@ -176,6 +178,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         float t;
         glm::vec3 intersectionPoint;
 
+
         if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time)) {
             float worldT = glm::length(intersectionPoint - eyePoint);
 
@@ -188,18 +191,10 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
     }
 
     if (closestShape != nullptr) {
-        glm::vec3 normal = closestShape->calcNormal(closestIntersection, time);
-        // normal[0] = (normal[0] + 1)*0.5;
-        // normal[1] = (normal[1] + 1)*0.5;
-        // normal[2] = (normal[2] + 1)*0.5;
-
-        // return glm::vec4(normal, 0);
+        glm::vec3 normal = closestShape->calcNormal(closestIntersection);
         const float epsilon = 1e-2f;
         glm::vec3 offsetIntersection = closestIntersection + epsilon * normal;
 
-        // if (!dynamic_cast<Sphere*>(closestShape)) {
-        //     offsetIntersection += epsilon * normal;
-        // }
         glm::vec3 directionToCamera = glm::normalize(-d);
 
         glm::vec3 ambient = scene.getGlobalData().ka * closestShape->getMaterial().cAmbient;
