@@ -58,6 +58,7 @@ add_executable(${PROJECT_NAME}
   src/raytracer/kdtree.h src/raytracer/kdtree.cpp
   src/utils/boundingbox.h
   src/utils/aspectratiowidget/aspectratiowidget.hpp
+  src/utils/lensfilereader.h src/utils/lensfilereader.cpp
 
 )
 

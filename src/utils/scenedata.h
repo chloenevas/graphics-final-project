@@ -169,3 +169,10 @@ struct SceneNode {
     std::vector<SceneLight*> lights;
     std::vector<SceneNode*> children;
 };
+
+struct LensInterface {
+    float radius;
+    float thickness;
+    float n;
+    float aperture;
+};
