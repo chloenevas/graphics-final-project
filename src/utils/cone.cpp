@@ -27,6 +27,9 @@ bool Cone::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirect
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayOrigin, 1.0f));
     glm::vec3 d = glm::normalize(glm::vec3(m_inverseCTM * glm::vec4(rayDirection, 0.0f)));
 
+    glm::vec3 movingCenter = m_center + glm::vec3(0.0f, static_cast<float>(2) * time, 0.0f);
+    P = P - movingCenter;
+
     float k = (m_radius * m_radius) / (m_height * m_height);
 
     float a = d.x * d.x + d.z * d.z - k * d.y * d.y;

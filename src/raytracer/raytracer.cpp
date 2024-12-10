@@ -126,7 +126,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
 }
 
 RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &scene, KdTree::KdNode* root,
-                                    const Camera &camera, const glm::vec3 &eyePoint, int maxDepth) {
+                          const Camera &camera, const glm::vec3 &eyePoint, int maxDepth) {
     float halfPixel = pixelSize / 2.0f;
 
     glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
@@ -134,11 +134,13 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
     // arbitrary threshold value, can change
     float threshold = 0.1;
 
-    float step = 1.0f / 4; // For 4 samples
-    float time1 = (0 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
-    float time2 = (1 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
-    float time3 = (2 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
-    float time4 = (3 * step) + static_cast<float>(arc4random()) / RAND_MAX * step;
+    float step = 1.0f / 4;
+
+    // generate random times in the shutter duration of 1 sec (random times 0-1)
+    float time1 = static_cast<float>(arc4random()) / RAND_MAX;
+    float time2 = static_cast<float>(arc4random()) / RAND_MAX;
+    float time3 = static_cast<float>(arc4random()) / RAND_MAX;
+    float time4 = static_cast<float>(arc4random()) / RAND_MAX;
 
     RGBA samples[4] = {
         traceRay(r + pixelSize * 0.25, c + pixelSize * 0.25, scene, root, eyePoint, d, 0, time1),
@@ -165,7 +167,7 @@ RGBA RayTracer::superSamp(float r, float c, int pixelSize, const RayTraceScene &
 
 
 RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::KdNode* root,
-                        const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time) {
+                         const glm::vec3 eyePoint, const glm::vec3 d, int currentDepth, float time) {
 
     float closestT = std::numeric_limits<float>::max();
     glm::vec3 closestIntersection;
@@ -177,6 +179,7 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         float t;
         glm::vec3 intersectionPoint;
 
+        // pass time to intersection to use it for the ray
         if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time)) {
             float worldT = glm::length(intersectionPoint - eyePoint);
 
@@ -236,17 +239,17 @@ RGBA RayTracer::traceRay(float r, float c, const RayTraceScene &scene, KdTree::K
         glm::vec4 reflectivity = closestShape->getMaterial().cReflective;
         if (reflectivity.r > 0.0f || reflectivity.g > 0.0f || reflectivity.b > 0.0f) {
             if (currentDepth < 4){
-            glm::vec3 reflectionDir = glm::reflect(d, normal);
-            RGBA reflectionColor = traceRay(r, c, scene, root, offsetIntersection, reflectionDir, currentDepth + 1, time);
+                glm::vec3 reflectionDir = glm::reflect(d, normal);
+                RGBA reflectionColor = traceRay(r, c, scene, root, offsetIntersection, reflectionDir, currentDepth + 1, time);
 
-            illumination += glm::vec4(
-                scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
-                scene.getGlobalData().ks * reflectivity.g * (reflectionColor.g / 255.0f),
-                scene.getGlobalData().ks * reflectivity.b * (reflectionColor.b / 255.0f),
-                1.0f
-                );
+                illumination += glm::vec4(
+                    scene.getGlobalData().ks * reflectivity.r * (reflectionColor.r / 255.0f),
+                    scene.getGlobalData().ks * reflectivity.g * (reflectionColor.g / 255.0f),
+                    scene.getGlobalData().ks * reflectivity.b * (reflectionColor.b / 255.0f),
+                    1.0f
+                    );
+            }
         }
-    }
         glm::vec4 transparency = closestShape->getMaterial().cTransparent;
         float ior = closestShape->getMaterial().ior;
         if ((transparency.r > 0.0f || transparency.g > 0.0f || transparency.b > 0.0f) && currentDepth < 4) {
