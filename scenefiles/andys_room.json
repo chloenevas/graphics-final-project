@@ -1,0 +1,314 @@
+{
+  "name": "big_room_scene",
+  "globalData": {
+    "ambientCoeff": 0.3,
+    "diffuseCoeff": 0.6,
+    "specularCoeff": 0.4,
+    "transparentCoeff": 0
+  },
+  "cameraData": {
+    "position": [
+      16.0,
+      2.0,
+      3.0
+    ],
+    "up": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "heightAngle": 45.0,
+    "focus": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "aperture": 0.5,
+    "focalLength": 25.0
+  },
+  "groups": [
+    {
+      "groups": [
+        {
+          "translate": [0.0, -5.0, 0.0],
+          "scale": [16.0, 0.5, 16.0],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.8,
+                0.4,
+                0.4
+              ],
+              "specular": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "shininess": 20
+            }
+          ]
+        },
+        {
+          "translate": [0.0, 5.0, 0.0],
+          "scale": [16.0, 0.5, 16.0],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.4,
+                0.8,
+                0.4
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [0.0, 0.0, 8.0],
+          "scale": [16, 10, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.4,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [0.0, 0.0, -8.0],
+          "scale": [16, 10, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.8,
+                0.8,
+                0.4
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [-8.0, 0.0, 0.0],
+          "scale": [0.5, 10.0, 16.0],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.8,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [-7.9, 0.0, -2.5],
+          "scale": [0.5, 3.5, 2.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [-7.9, 0.0, 2.5],
+          "scale": [0.5, 3.5, 2.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [2.5, 0.0, -7.9],
+          "scale": [2.5, 3.5, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [-2.5, 0.0, -7.9],
+          "scale": [2.5, 3.5, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [2.5, 0.0, 7.9],
+          "scale": [2.5, 3.5, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        },
+        {
+          "translate": [-2.5, 0.0, 7.9],
+          "scale": [2.5, 3.5, 0.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.0,
+                0.4,
+                0.8
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "groups": [
+        {
+          "translate": [0.0, 4.0, 0.0], 
+          "scale": [0.2, 0.2, 0.2], 
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0]
+            }
+          ]
+        },
+        {
+          "translate": [-3.0, 4.0, 3.0], 
+          "scale": [0.2, 0.2, 0.2], 
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0]
+            }
+          ]
+        },
+        {
+          "translate": [3.0, 4.0, 3.0], 
+          "scale": [0.4, 0.4, 0.4], 
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0] 
+            }
+          ]
+        },
+        {
+          "translate": [3.0, 4.0, -3.0], 
+          "scale": [0.4, 0.4, 0.4], 
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0] 
+            }
+          ]
+        },
+        {
+          "translate": [-3.0, 4.0, -3.0], 
+          "scale": [0.4, 0.4, 0.4], 
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0] 
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
