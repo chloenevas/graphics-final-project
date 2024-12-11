@@ -20,9 +20,15 @@ public:
 
     void id() override;
 
+    void setRadius(float r);
+
+    void setIsLens(bool isLens);
+
+
 private:
     glm::vec3 m_center;
     float m_radius;
+    bool m_isLens;
 };
 
 #endif // SPHERE_H

@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
         rtConfig.enableDepthOfField  = settings.value("Feature/depthoffield").toBool();
         rtConfig.maxRecursiveDepth   = settings.value("Settings/maximum-recursive-depth").toInt();
         rtConfig.onlyRenderNormals   = settings.value("Settings/only-render-normals").toBool();
+        rtConfig.enableMotionBlur  = settings.value("Feature/motion-blur").toBool();
 
         RayTracer raytracer{ rtConfig };
 

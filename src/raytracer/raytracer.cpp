@@ -78,6 +78,8 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
     int imageWidth = scene.width();
     int imageHeight = scene.height();
 
+    bool lens = (scene.getLensInterfaces().size() != 0);
+
     for (int r = 0; r < imageHeight; r ++) {
         for (int c = 0; c < imageWidth; c ++) {
             glm::vec4 color(0,0,0,255);
@@ -142,6 +144,16 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
+            } else if (lens) {
+                glm::vec3 d = glm::normalize(scene.getPoint(r, c, camera));
+                glm::vec3 eyePointLens;
+                glm::vec3 dLens;
+                if (!traceRayThroughLens(glm::vec3(0.0f), d, &eyePointLens, &dLens, scene.getLensInterfaces())) {
+                    color = glm::vec4(0, 0, 0, 255);
+                } else {
+                    d = glm::normalize(camera.getInverseViewMatrix() * glm::vec4(dLens, 0.0f));
+                    color = traceRay(scene, root, camera.getInverseViewMatrix() * glm::vec4(eyePointLens, 1.0f), d, maxDepth, 0);
+                }
             }
             else {
 
@@ -336,4 +348,65 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
     } else {
         return glm::vec4(0,0,0,1.0f);
     }
+}
+
+bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d, glm::vec3 *eyePointOut, glm::vec3 *dOut, std::vector<LensInterface> lenses) {
+    glm::vec3 dLens = d;
+    glm::vec3 eyePointLens = eyePoint;
+    float z = 0.0f;
+    for (int i = 0; i < lenses.size(); i++) {
+        LensInterface lens = lenses[i];
+        z -= lens.thickness;
+        float t;
+        glm::vec3 n;
+        glm::vec3 intersectionPoint;
+        bool isStop = (lens.radius == 0);
+        if (isStop) {
+            t = (z - eyePointLens[2]) / dLens[2];
+            intersectionPoint = eyePointLens + t * dLens;
+        } else {
+            float r = lens.radius;
+            float center = z + r;
+            glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, center));
+            Sphere sphere = Sphere(translation, SceneMaterial{}, glm::vec3(0.0), nullptr);
+            sphere.setIsLens(true);
+            sphere.setRadius(r);
+            if (!sphere.calcIntersection(eyePointLens, dLens, intersectionPoint, t, 0.0)) {
+                return false;
+            } else {
+                n = sphere.calcNormal(intersectionPoint);
+            }
+            float n1 = lens.n;
+            float n2 = (i < lenses.size() - 1 && lenses[i + 1].n != 0) ? lenses[i+1].n : 1.0f;
+            glm::vec3 outputD;
+            if (!refract(glm::normalize(-dLens), n, n1, n2, &outputD)) {
+                return false;
+            }
+            dLens = outputD;
+        }
+        float l = std::sqrt(intersectionPoint[0] * intersectionPoint[0] + intersectionPoint[1] * intersectionPoint[1]);
+        if (l > lens.aperture) {
+            return false;
+        }
+        eyePointLens = intersectionPoint;
+    }
+    *dOut = dLens;
+    *eyePointOut = eyePointLens;
+    return true;
+}
+
+bool RayTracer::refract(glm::vec3 d, glm::vec3 normal, float n1, float n2, glm::vec3 *outputD) {
+    float eta = n1/n2;
+    float cos1 = glm::dot(d, normal);
+    bool entering = cos1 < 0.0f;
+    cos1 = entering ? -cos1 : cos1;
+    float sin1 = std::max(0.0f, 1.0f - cos1 * cos1);
+    float sin2 = eta * eta * sin1;
+    if (sin2 >= 1.0f) {
+        return false;
+    }
+    float cos2 = std::sqrt(1.0f - sin2);
+    *outputD = glm::normalize(eta * -d + (eta * cos1 - cos2) * normal);
+
+    return true;
 }

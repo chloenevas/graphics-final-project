@@ -19,6 +19,7 @@ private:
     Camera m_camera;
     std::vector<RenderShapeData> shapes;
     std::vector<SceneLightData> lights;
+    std::vector<LensInterface> lensInterfaces;
 public:
     RayTraceScene(int width, int height, const RenderData &metaData);
 
@@ -39,4 +40,6 @@ public:
     const std::vector<SceneLightData>& getLights() const;
 
     const glm::vec3 getPoint(float i, float j, const Camera& camera) const;
+
+    const std::vector<LensInterface>& getLensInterfaces() const;
 };

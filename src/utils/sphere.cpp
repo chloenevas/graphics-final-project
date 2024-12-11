@@ -3,7 +3,7 @@
 #include <iostream>
 
 Sphere::Sphere(const glm::mat4& ctm, const SceneMaterial& material, glm::vec3 velocity, const Image* image)
-    : Shape(ctm, material, velocity, image), m_center(0,0,0), m_radius(0.5f) {
+    : Shape(ctm, material, velocity, image), m_center(0,0,0), m_radius(0.5f), m_isLens(false) {
     m_inverseCTM = glm::inverse(m_ctm);
 }
 
@@ -37,14 +37,21 @@ bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDire
         float t1 = (-b + sqrt(discriminant)) / (2.0f * a);
         float t2 = (-b - sqrt(discriminant)) / (2.0f * a);
 
-        if (t1 >= 0 && t2 >= 0) {
-            t = glm::min(t1, t2);
-        } else if (t1 >= 0) {
-            t = t1;
-        } else if (t2 >= 0) {
-            t = t2;
+        if (m_isLens) {
+            t = m_radius < 0 ? glm::min(t1, t2) : glm::max(t1, t2);
+            if (t < 0) {
+                return false;
+            }
         } else {
-            return false;
+            if (t1 >= 0 && t2 >= 0) {
+                t = glm::min(t1, t2);
+            } else if (t1 >= 0) {
+                t = t1;
+            } else if (t2 >= 0) {
+                t = t2;
+            } else {
+                return false;
+            }
         }
 
         intersectionPoint = P + t * d;
@@ -92,6 +99,13 @@ glm::vec3 Sphere::getTexture(const glm::vec3& intersection) {
     return glm::vec3(pixel.r / 255.0f, pixel.g / 255.0f, pixel.b / 255.0f);
 }
 
+void Sphere::setRadius(float r) {
+    m_radius = r;
+}
+
+void Sphere::setIsLens(bool isLens) {
+    m_isLens = isLens;
+}
 
 void Sphere::id() {
     std::cout << "Sphere" << std::endl;
