@@ -145,7 +145,11 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/framed_andy.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
