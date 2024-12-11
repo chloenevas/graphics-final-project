@@ -27,35 +27,140 @@
     "focalLength": 9.0
   },
   "groups": [
-    {
-      "lights": [
-        {
-          "type": "directional",
-          "color": [
-            0.8,
-            0.8,
-            0.8
-          ],
-          "direction": [
-            -1,
-            -1,
-            -1
-          ]
-        }
-      ]
-    },
+     { "translate": [10, 80, 30],
+            "lights": [
+              {
+                "type": "area",
+                "color": [
+                  10,
+                  10,
+                  10
+                ],
+                "direction": [
+                  0,
+                  1,
+                  0
+                ],
+                "width": 20.0,
+                "height": 20.0,
+                "attenuationCoeff": [0.1, 0.1, 0.0]
+              }
+            ]
+          },
+     { "translate": [10, 30,90],
+            "lights": [
+              {
+                "type": "area",
+                "color": [
+                  5,
+                  5,
+                  5
+                ],
+                "direction": [
+                  0,
+                  1,
+                  0
+                ],
+                "width": 20.0,
+                "height": 20.0,
+                "attenuationCoeff": [0.3, 0.3, 0.0]
+              }
+            ]
+          },
     {
       "groups": [
+          {"translate": [
+              -5, 2, -5
+            ],
+              "rotate": [
+                  0,
+                  1,
+                  0,
+                  45
+              ],
+            "scale": [
+              20,
+              7,
+              7
+            ],
+            "primitives": [
+              {
+                "type": "cube",
+                "diffuse": [
+                  0.0,
+                  0.0,
+                  1.0
+                ],
+                "specular": [
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "shininess": 0,
+                "blend": 1.0,
+                "textureFile": "textures/sunset.jpg",
+                "textureU": 1.0,
+                "textureV": 1.0,
+                "velocity": [
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+               
+              }
+            ]
+          },
+          {"translate": [
+              -6, -15, -8
+            ],
+              "rotate": [
+                  -0.3,
+                  1,
+                  0.15,
+                  45
+              ],
+            "scale": [
+              40,
+              7,
+              30
+            ],
+            "primitives": [
+              {
+                "type": "cube",
+                "diffuse": [
+                  0.0,
+                  1.0,
+                  0.0
+                ],
+                "specular": [
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                "shininess": 0,
+                "blend": 0.5,
+                "textureFile": "textures/field.jpg",
+                "textureU": 1.0,
+                "textureV": 1.0,
+                "velocity": [
+                  0.0,
+                  0.0,
+                  0.0
+                ]
+               
+              }
+            ]
+          },
         {
           "translate": [
-            -6.5,
-            -4.5,
-            1.0
+              -4.5,
+              -3,
+              1.0
           ],
           "rotate": [
             -0.75,
             4,
-            -3.5,
+            -4,
             120
           ],
           "scale": [
@@ -83,7 +188,7 @@
               "textureV": 1.0,
               "velocity": [
                 0.0,
-                0.1,
+                1.04,
                 0.0
               ]
             }
@@ -102,9 +207,9 @@
             120
           ],
           "scale": [
-            3.5,
-            3.5,
-            3.5
+            2.25,
+            2.25,
+            2.25
           ],
           "primitives": [
             {
@@ -126,7 +231,7 @@
               "textureV": 1.0,
               "velocity": [
                 0.0,
-                0.0,
+                1.12,
                 0.0
               ]
             }
@@ -136,7 +241,7 @@
           "translate": [
               -4.0,
               2.0,
-              1.0
+              2.0
           ],
           "rotate": [
             0.5,
@@ -169,7 +274,7 @@
               "textureV": 1.0,
               "velocity": [
                 0.0,
-                0.4,
+                1.2,
                 0.0
               ]
             }
@@ -188,9 +293,9 @@
             100
           ],
           "scale": [
-            1.3,
-            1.3,
-            1.3
+            1.2,
+            1.2,
+            1.2
           ],
           "primitives": [
             {
@@ -212,7 +317,7 @@
               "textureV": 1.0,
               "velocity": [
                 0.0,
-                0.2,
+                1.16,
                 0.0
               ]
             }
@@ -220,9 +325,9 @@
         },
         {
           "translate": [
-            3.75,
-            -0.5,
-            -2.0
+            2.75,
+        -0.3,
+            -3.0
           ],
           "rotate": [
             0.4,
@@ -255,7 +360,7 @@
               "textureV": 1.0,
               "velocity": [
                 0.0,
-                0.3,
+                1.08,
                 0.0
               ]
             }
