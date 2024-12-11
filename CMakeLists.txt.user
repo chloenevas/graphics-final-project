@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 14.0.1, 2024-12-11T16:48:12. -->
+<!-- Written by QtCreator 14.0.1, 2024-12-11T17:14:11. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -239,8 +239,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">projects_ray</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.projects_ray</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">projects_ray</value>
-    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
-    <value type="QString" key="RunConfiguration.Arguments">/Users/efratavigdor/Desktop/CS1230/graphics-final-project/inifiles/falling_spheres.ini</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

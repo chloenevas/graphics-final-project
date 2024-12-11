@@ -689,8 +689,8 @@
  mdp:/Users/efratavigdor/Qt/6.5.3/macos/lib/QtWidgets.framework/Versions/A/Headers/qtwidgetsexports.h
  mdp:/Users/efratavigdor/Qt/6.5.3/macos/lib/QtWidgets.framework/Versions/A/Headers/qtwidgetsglobal.h
  mdp:/Users/efratavigdor/Qt/6.5.3/macos/lib/QtWidgets.framework/Versions/A/Headers/qwidget.h
-/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cube.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.h
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cube.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/raytracer.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/boundingbox.h
