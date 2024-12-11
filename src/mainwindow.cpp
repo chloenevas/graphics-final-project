@@ -11,6 +11,24 @@
 #include <QCheckBox>
 #include <QPainter>
 #include <QMessageBox>
+#include <QStackedWidget>
+#include <QButtonGroup>
+
+#include <QCoreApplication>
+#include <QCommandLineParser>
+#include <QImage>
+#include <QtCore>
+#include "mainwindow.h"
+
+#include <iostream>
+#include "utils/sceneparser.h"
+#include "raytracer/raytracer.h"
+#include "raytracer/raytracescene.h"
+
+#include <QApplication>
+#include <QScreen>
+#include <iostream>
+#include <QSettings>
 
 MainWindow::MainWindow()
 {
@@ -57,10 +75,10 @@ MainWindow::MainWindow()
     lensLayout->setAlignment(Qt::AlignTop);
     lensGroup->setLayout(lensLayout);
 
-    QWidget *freeGroup = new QWidget();
-    QVBoxLayout *freeLayout = new QVBoxLayout();
-    freeLayout->setAlignment(Qt::AlignTop);
-    freeGroup->setLayout(freeLayout);
+    QWidget *sandGroup = new QWidget();
+    QVBoxLayout *sandLayout = new QVBoxLayout();
+    sandLayout->setAlignment(Qt::AlignTop);
+    sandGroup->setLayout(sandLayout);
 
     QScrollArea *controlsScroll = new QScrollArea();
     QTabWidget *tabs = new QTabWidget();
@@ -70,34 +88,13 @@ MainWindow::MainWindow()
     tabs->addTab(depthGroup, "Depth of Field");
     tabs->addTab(motionGroup, "Motion Blur");
     tabs->addTab(lensGroup, "Lens Assembly");
-    tabs->addTab(freeGroup, "Sandbox");
+    tabs->addTab(sandGroup, "Sandbox");
 
     connect(tabs, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
 
     vLayout->addWidget(controlsScroll);
 
     // depth section
-
-    addLabel(depthLayout, "Choose Image:");
-
-    QGroupBox *imageBox = new QGroupBox();
-    QHBoxLayout *imageLay = new QHBoxLayout();
-
-    addRadioButton(imageLay, "Image 1", settings.currImage == IMAGE1, [this]{
-        depthSlider->setValue(0);
-        updateImage("primsalad", 0);
-    });
-    addRadioButton(imageLay, "Image 2", settings.currImage == IMAGE2, [this]{
-        depthSlider->setValue(0);
-        updateImage("image2", 0);
-    });
-    addRadioButton(imageLay, "Image 3", settings.currImage == IMAGE3, [this]{
-        depthSlider->setValue(0);
-        updateImage("image3", 0);
-    });
-
-    imageBox->setLayout(imageLay);
-    depthLayout->addWidget(imageBox);
 
     addLabel(depthLayout, "Depth of Field:");
 
@@ -107,13 +104,13 @@ MainWindow::MainWindow()
     depthSlider = new QSlider(Qt::Horizontal);
     depthSlider->setTickInterval(1);
     depthSlider->setMinimum(0);
-    depthSlider->setMaximum(20);
+    depthSlider->setMaximum(100);
     depthSlider->setValue(0);
-    depthLayout->addWidget(depthSlider);
+    // depthLayout->addWidget(depthSlider);
 
     depthBox = new QSpinBox();
     depthBox->setMinimum(0);
-    depthBox->setMaximum(20);
+    depthBox->setMaximum(100);
     depthBox->setSingleStep(1);
     depthBox->setValue(0);
 
@@ -122,16 +119,15 @@ MainWindow::MainWindow()
     lay1->setLayout(lay11);
     depthLayout->addWidget(lay1);
 
-    connectWidgets(depthSlider, depthBox);
-
-    // Connect the slider to the updateImage slot
+    connect(depthSlider, &QSlider::valueChanged, this, &MainWindow::depthChanged);
+    connect(depthBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &MainWindow::depthChanged);
     connect(depthSlider, &QSlider::valueChanged, this, [this](int value) {
-        updateImage(settings.currImagePath, value);
+        updateImage("sphere_line", value);
     });
 
-    // motion section
-    // addPushButton(motionLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    updateImage("sphere_line", 0);
 
+    // motion section
     QLabel *motionLabel = new QLabel();
     motionLabel->setText("Motion Blur Sensitivity:");
     motionLayout->addWidget(motionLabel);
@@ -157,96 +153,199 @@ MainWindow::MainWindow()
     lay2->setLayout(lay22);
     motionLayout->addWidget(lay2);
 
-    connectWidgets(motionSlider, motionBox);
+    connect(motionSlider, &QSlider::valueChanged, this, &MainWindow::motionChanged);
+    connect(motionBox, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &MainWindow::motionChanged);
+    connect(motionSlider, &QSlider::valueChanged, this, [this](int value) {
+        updateImage("falling_spheres", value);
+    });
 
     // lens section
+    addLabel(lensLayout, "Choose Lens:");
 
-    // addPushButton(lensLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    QGroupBox *imageBox = new QGroupBox();
+    QHBoxLayout *imageLay = new QHBoxLayout();
+
+    addRadioButton(imageLay, "Normal", true, [this]{
+        updateImage("andys_room", 0);
+    });
+    addRadioButton(imageLay, "Fish Eye", false, [this]{
+        updateImage("andys_room", 1);
+    });
+    addRadioButton(imageLay, "Wide", false, [this]{
+        updateImage("andys_room", 2);
+    });
+
+    imageBox->setLayout(imageLay);
+    lensLayout->addWidget(imageBox);
 
     // sandbox section
 
-    // addPushButton(freeLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
+    // Create the layout and buttons
+
+    addLabel(sandLayout, "Choose Feature:");
+
+    QHBoxLayout *imageLay2 = new QHBoxLayout;
+    QStackedWidget *panelStack = new QStackedWidget;
+    QGroupBox *imageBox2 = new QGroupBox();
+
+    QRadioButton *depthButton = new QRadioButton("Depth of Field");
+    depthButton->setChecked(settings.renderMode == DEPTH);
+    imageLay2->addWidget(depthButton);
+
+    QRadioButton *motionButton = new QRadioButton("Motion");
+    motionButton->setChecked(settings.renderMode == MOTION);
+    imageLay2->addWidget(motionButton);
+
+    QRadioButton *lensButton = new QRadioButton("Lens");
+    lensButton->setChecked(settings.renderMode == LENS);
+    imageLay2->addWidget(lensButton);
+
+    imageBox2->setLayout(imageLay2);
+    sandLayout->addWidget(imageBox2);
+
+    sandLayout->addWidget(panelStack);
+
+    QWidget *depthSettingsWidget = new QWidget();
+    QVBoxLayout *depthSettingsLayout = new QVBoxLayout(depthSettingsWidget);
+
+    addLabel(depthSettingsLayout, "Depth of Field Settings:");
+    addDoubleSpinBox(depthSettingsLayout, "Aperture:", 0.1, 10.0, 0.1, settings.aperture, 2, [this](double value) {
+        settings.aperture = value;
+    });
+    addDoubleSpinBox(depthSettingsLayout, "Focal Length:", 10.0, 200.0, 1.0, settings.focalLength, 1, [this](double value) {
+        settings.focalLength = value;
+    });
+
+    // Motion Panel
+    QWidget *motionSettingsWidget = new QWidget();
+    QVBoxLayout *motionSettingsLayout = new QVBoxLayout(motionSettingsWidget);
+
+    addLabel(motionSettingsLayout, "Motion Settings:");
+    addDoubleSpinBox(motionSettingsLayout, "Motion Blur Intensity:", 0.0, 1.0, 0.1, settings.velocity, 2, [this](double value) {
+        settings.velocity = value;
+    });
+    // addDoubleSpinBox(motionSettingsLayout, "Shutter Speed:", 0.1, 2.0, 0.1, settings.shutterSpeed, 2, [this](double value) {
+    //     settings.shutterSpeed = value;
+    // });
+
+    // Lens Panel
+    QWidget *lensSettingsWidget = new QWidget();
+    QVBoxLayout *lensSettingsLayout = new QVBoxLayout(lensSettingsWidget);
+
+    addLabel(lensSettingsLayout, "Lens Settings:");
+    // addDoubleSpinBox(lensSettingsLayout, "Lens Distortion:", 0.0, 1.0, 0.1, settings.lensDistortion, 2, [this](double value) {
+    //     settings.lensDistortion = value;
+    // });
+    // addDoubleSpinBox(lensSettingsLayout, "Lens Focal Distance:", 10.0, 200.0, 1.0, settings.lensFocalDistance, 1, [this](double value) {
+    //     settings.lensFocalDistance = value;
+    // });
+
+    // Add widgets to the stack pane
+    panelStack->addWidget(depthSettingsWidget);  // Panel 0: Depth of Field
+    panelStack->addWidget(motionSettingsWidget); // Panel 1: Motion
+    panelStack->addWidget(lensSettingsWidget);   // Panel 2: Lens
+
+    connect(depthButton, &QRadioButton::clicked, this, [panelStack]() {
+        settings.renderMode = DEPTH;
+        panelStack->setCurrentIndex(DEPTH);
+    });
+    connect(motionButton, &QRadioButton::clicked, this, [panelStack]() {
+        settings.renderMode = MOTION;
+        panelStack->setCurrentIndex(MOTION); // Assuming DEPTH corresponds to the correct index
+    });
+    connect(lensButton, &QRadioButton::clicked, this, [panelStack]() {
+        settings.renderMode = LENS;
+        panelStack->setCurrentIndex(LENS); // Assuming DEPTH corresponds to the correct index
+    });
 
 
-    // // brush selection
-    // addHeading(brushLayout, "Brush");
-    // addRadioButton(brushLayout, "Constant", settings.brushType == BRUSH_CONSTANT, [this]{ setBrushType(BRUSH_CONSTANT); });
-    // addRadioButton(brushLayout, "Linear", settings.brushType == BRUSH_LINEAR, [this]{ setBrushType(BRUSH_LINEAR); });
-    // addRadioButton(brushLayout, "Quadratic", settings.brushType == BRUSH_QUADRATIC, [this]{ setBrushType(BRUSH_QUADRATIC); });
-    // addRadioButton(brushLayout, "Smudge", settings.brushType == BRUSH_SMUDGE, [this]{ setBrushType(BRUSH_SMUDGE); });
-
-    // // brush parameters
-    // addSpinBox(brushLayout, "red", 0, 255, 1, settings.brushColor.r, [this](int value){ setUIntVal(settings.brushColor.r, value); });
-    // addSpinBox(brushLayout, "green", 0, 255, 1, settings.brushColor.g, [this](int value){ setUIntVal(settings.brushColor.g, value); });
-    // addSpinBox(brushLayout, "blue", 0, 255, 1, settings.brushColor.b, [this](int value){ setUIntVal(settings.brushColor.b, value); });
-    // addSpinBox(brushLayout, "alpha", 0, 255, 1, settings.brushColor.a, [this](int value){ setUIntVal(settings.brushColor.a, value); });
-    // addSpinBox(brushLayout, "radius", 0, 100, 1, settings.brushRadius, [this](int value){ setIntVal(settings.brushRadius, value); });
-
-    // // extra credit brushes
-    // addHeading(brushLayout, "Extra Credit Brushes");
-    // addRadioButton(brushLayout, "Spray", settings.brushType == BRUSH_SPRAY, [this]{ setBrushType(BRUSH_SPRAY); });
-    // addSpinBox(brushLayout, "density", 0, 100, 1, settings.brushDensity, [this](int value){ setIntVal(settings.brushDensity, value); });
-    // addRadioButton(brushLayout, "Speed", settings.brushType == BRUSH_SPEED, [this]{ setBrushType(BRUSH_SPEED); });
-    // addRadioButton(brushLayout, "Fill", settings.brushType == BRUSH_FILL, [this]{ setBrushType(BRUSH_FILL); });
-    // addRadioButton(brushLayout, "Custom", settings.brushType == BRUSH_CUSTOM, [this]{ setBrushType(BRUSH_CUSTOM); });
-    // addCheckBox(brushLayout, "Fix alpha blending", settings.fixAlphaBlending, [this](bool value){ setBoolVal(settings.fixAlphaBlending, value); });
-
-    // // clearing canvas
-    // addPushButton(brushLayout, "Clear canvas", &MainWindow::onClearButtonClick);
-
-    // // save canvas as image
-    // addPushButton(brushLayout, "Save Image", &MainWindow::onSaveButtonClick);
-
-    // filters
-    // addHeading(filterLayout, "Filter");
-    // addRadioButton(filterLayout, "Edge detect", settings.filterType == FILTER_EDGE_DETECT,  [this]{ setFilterType(FILTER_EDGE_DETECT); });
-    // addDoubleSpinBox(filterLayout, "sensitivity", 0.01, 1, 0.01, settings.edgeDetectSensitivity, 2, [this](float value){ setFloatVal(settings.edgeDetectSensitivity, value); });
-
-    // addRadioButton(filterLayout, "Blur", settings.filterType == FILTER_BLUR, [this]{ setFilterType(FILTER_BLUR); });
-    // addSpinBox(filterLayout, "radius", 0, 100, 1, settings.blurRadius, [this](int value){ setIntVal(settings.blurRadius, value); });
-
-    // addRadioButton(filterLayout, "Scale", settings.filterType == FILTER_SCALE, [this]{ setFilterType(FILTER_SCALE); });
-    // addDoubleSpinBox(filterLayout, "x", 0.1, 10, 0.1, settings.scaleX, 2, [this](float value){ setFloatVal(settings.scaleX, value); });
-    // addDoubleSpinBox(filterLayout, "y", 0.1, 10, 0.1, settings.scaleY, 2, [this](float value){ setFloatVal(settings.scaleY, value); });
-
-    // // extra credit filters
-    // addHeading(filterLayout, "Extra Credit Filters");
-    // addRadioButton(filterLayout, "Median", settings.filterType == FILTER_MEDIAN,  [this]{ setFilterType(FILTER_MEDIAN); });
-    // addSpinBox(filterLayout, "radius", 1, 100, 1, settings.medianRadius, [this](int value){ setIntVal(settings.medianRadius, value); });
-
-    // addRadioButton(filterLayout, "Chromatic aberration", settings.filterType == FILTER_CHROMATIC,  [this]{ setFilterType(FILTER_CHROMATIC); });
-    // addSpinBox(filterLayout, "red shift", -100, 100, 0, settings.rShift, [this](int value){ setIntVal(settings.rShift, value); });
-    // addSpinBox(filterLayout, "green shift", -100, 100, 0, settings.gShift, [this](int value){ setIntVal(settings.gShift, value); });
-    // addSpinBox(filterLayout, "blue shift", -100, 100, 0, settings.bShift, [this](int value){ setIntVal(settings.bShift, value); });
-
-    // addRadioButton(filterLayout, "Tone mapping", settings.filterType == FILTER_MAPPING,  [this]{ setFilterType(FILTER_MAPPING); });
-    // addCheckBox(filterLayout, "Non linear function", settings.nonLinearMap, [this](bool value){ setBoolVal(settings.nonLinearMap, value); });
-    // addDoubleSpinBox(filterLayout, "gamma", 0.1, 2, 0.1, settings.gamma, 2, [this](float value){ setFloatVal(settings.gamma, value); });
-
-    // addRadioButton(filterLayout, "Rotation", settings.filterType == FILTER_ROTATION,  [this]{ setFilterType(FILTER_ROTATION); });
-    // addDoubleSpinBox(filterLayout, "angle", -360, 360, 0.1, settings.rotationAngle, 2, [this](float value){ setFloatVal(settings.rotationAngle, value); });
-
-    // addRadioButton(filterLayout, "Bilteral smooth", settings.filterType == FILTER_BILATERAL,  [this]{ setFilterType(FILTER_BILATERAL); });
-    // addSpinBox(filterLayout, "radius", 1, 100, 1, settings.bilateralRadius, [this](int value){ setIntVal(settings.bilateralRadius, value); });
-
-    // filter push buttons
-    // addPushButton(filterLayout, "Load Image", &MainWindow::onUploadButtonClick);
-    // addPushButton(filterLayout, "Apply Filter", &MainWindow::onFilterButtonClick);
-    // addPushButton(filterLayout, "Revert Image", &MainWindow::onRevertButtonClick);
-    // addPushButton(filterLayout, "Save Image", &MainWindow::onSaveButtonClick);
+    addPushButton(sandLayout, "Load Scenefile", &MainWindow::onUploadButtonClick);
 }
 
-/**
- * @brief Sets up Canvas2D
- */
-// void MainWindow::setupCanvas2D() {
-//     m_canvas = new Canvas2D();
-//     m_canvas->init();
+void MainWindow::render(){
+    // QApplication a(argc, argv);
 
-//     if (!settings.imagePath.isEmpty()) {
-//         m_canvas->loadImageFromFile(settings.imagePath);
-//     }
-// }
+    // QCommandLineParser parser;
+    // parser.addHelpOption();
+    // parser.addPositionalArgument("config", "Path of the config file.");
+    // // parser.process(a);
+
+    // auto positionalArgs = parser.positionalArguments();
+    // if (positionalArgs.size() != 1) {
+    //     std::cerr << "Not enough arguments. Please provide a path to a config file (.ini) as a command-line argument." << std::endl;
+    //     a.exit(1);
+    // }
+
+    // QSettings settings( positionalArgs[0], QSettings::IniFormat );
+
+    RenderData metaData;
+    bool success = SceneParser::parseScene(currScene.toStdString(), metaData);
+
+
+    // have condition
+    metaData.cameraData.aperture = settings.aperture;
+    metaData.cameraData.focalLength = settings.focalLength;
+
+    // have condition
+    for (auto &shape : metaData.shapes) {
+        shape.primitive.velocity += settings.velocity; // Increase each shape's velocity by 4
+    }
+
+    // add lens adjustments here
+
+
+    if (!success) {
+        std::cerr << "Error loading scene: \"" << currScene.toStdString() << "\"" << std::endl;
+        // a.exit(1);
+    }
+
+    int width = 1024;
+    int height = 768;
+
+    // Extracting data pointer from Qt's image API
+    QImage myImage = QImage(width, height, QImage::Format_RGBX8888);
+    myImage.fill(Qt::black);
+    RGBA *data = reinterpret_cast<RGBA *>(myImage.bits());
+
+    // Setting up the raytracer
+    RayTracer::Config rtConfig{};
+    // rtConfig.enableShadow        = false;
+    // rtConfig.enableReflection    = false;
+    // rtConfig.enableRefraction    = false;
+    // rtConfig.enableTextureMap    = false;
+    // rtConfig.enableTextureFilter = false;
+    // rtConfig.enableParallelism   = false;
+    // rtConfig.enableSuperSample   = false;
+    // rtConfig.enableAcceleration  = false;
+    // rtConfig.maxRecursiveDepth   = false;
+    // rtConfig.onlyRenderNormals   = false;
+
+    rtConfig.enableDepthOfField = settings.renderMode == DEPTH ? true : false;
+    rtConfig.enableMotionBlur = settings.renderMode == MOTION ? true : false;
+
+    RayTracer raytracer{ rtConfig };
+
+    RayTraceScene rtScene{ width, height, metaData };
+
+    // Note that we're passing `data` as a pointer (to its first element)
+    // Recall from Lab 1 that you can access its elements like this: `data[i]`
+    raytracer.render(data, rtScene);
+
+    image->setPixmap(QPixmap::fromImage(myImage));
+
+    // // Saving the image
+    // success = image.save(oImagePath);
+    // if (!success) {
+    //     success = image.save(oImagePath, "PNG");
+    // }
+    // if (success) {
+    //     std::cout << "Saved rendered image to \"" << oImagePath.toStdString() << "\"" << std::endl;
+    // } else {
+    //     std::cerr << "Error: failed to save image to \"" << oImagePath.toStdString() << "\"" << std::endl;
+    // }
+
+    // a.exit();
+}
 
 
 // ------ FUNCTIONS FOR ADDING UI COMPONENTS ------
@@ -327,10 +426,6 @@ void MainWindow::updateImage(const QString &folder, int value) {
         return;
     }
 
-    settings.currImagePath = folder;
-
-    // settings.currImage = value;
-
     // Convert the image to RGBX8888 format if needed
     myImage = myImage.convertToFormat(QImage::Format_RGBX8888);
 
@@ -340,86 +435,49 @@ void MainWindow::updateImage(const QString &folder, int value) {
     update();
 }
 
-
-
-// void MainWindow::addSlider(QSlider *slider, QSpinBox *box, QBoxLayout *layout, QString text, float tick, int min, int max, int value){
-//     QLabel *label = new QLabel();
-//     label->setText(text);
-//     layout->addWidget(label);
-
-//     QGroupBox *sliderLayout = new QGroupBox();
-//     QHBoxLayout *layoutLocal = new QHBoxLayout();
-
-//     slider = new QSlider(Qt::Horizontal);
-//     slider->setTickInterval(tick);
-//     slider->setMinimum(min);
-//     slider->setMaximum(max);
-//     slider->setValue(value);
-//     layout->addWidget(slider);
-
-//     box = new QSpinBox();
-//     box->setMinimum(min);
-//     box->setMaximum(max);
-//     box->setSingleStep(tick);
-//     box->setValue(value);
-
-//     layoutLocal->addWidget(slider);
-//     layoutLocal->addWidget(box);
-//     sliderLayout->setLayout(layoutLocal);
-//     layout->addWidget(sliderLayout);
-// }
-
 // ------ FUNCTIONS FOR UPDATING SETTINGS ------
+
+void MainWindow::onUploadButtonClick() {
+    // Get new image path selected by user
+    QString folderPath = QDir::homePath() + "/graphics_final_project/scenefiles";  // Specify the folder path
+    QString file = QFileDialog::getOpenFileName(this, tr("Open Image"), folderPath, tr("Image Files (*.json)"));
+    if (file.isEmpty()) { return; }
+
+    currScene = file;
+    render();
+}
 
 void MainWindow::depthChanged(int newValue) {
     depthSlider->setValue(newValue);
     depthBox->setValue(newValue);
-    // settings.shapeParameter1 = p1Slider->value();
-    // realtime->settingsChanged();
 }
 
-void MainWindow::connectWidgets(QSlider *slider, QSpinBox *box) {
-    // Synchronize slider value to spinbox
-    connect(slider, &QSlider::valueChanged, this, &MainWindow::depthChanged);
-
-    // Synchronize spinbox value to slider
-    connect(box, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &MainWindow::depthChanged);
+void MainWindow::motionChanged(int newValue) {
+    motionSlider->setValue(newValue);
+    motionBox->setValue(newValue);
 }
 
 void MainWindow::onTabChanged(int index) {
-    // switch (index) {
-    // case 0:
-    //     settings.depth = true;
-    //     settings.motion = false;
-    //     settings.lens = false;
-    //     settings.sandbox = false;
-    //     depthSlider->setValue(10);
-    //     depthBox->setValue(10);
-    //     break;
-    // case 1:
-    //     settings.depth = false;
-    //     settings.motion = true;
-    //     settings.lens = false;
-    //     settings.sandbox = false;
-    //     motionSlider->setValue(5);
-    //     motionBox->setValue(5);
-    //     break;
-    // case 2:
-    //     settings.depth = false;
-    //     settings.motion = false;
-    //     settings.lens = true;
-    //     settings.sandbox = false;
-    //     break;
-    // case 3:
-    //     settings.depth = false;
-    //     settings.motion = false;
-    //     settings.lens = false;
-    //     settings.sandbox = true;
-    //     break;
-
-    // default:
-    //     break;
-    // }
+    switch (index) {
+    case 0:
+        updateImage("sphere_line", 0);
+        depthChanged(0);
+        break;
+    case 1:
+        updateImage("falling_spheres", 0);
+        motionChanged(0);
+        break;
+    case 2:
+        updateImage("andys_room", 0);
+        break;
+    default:
+        int width = 1024;
+        int height = 768;
+        QPixmap whitePixmap(width, height);
+        whitePixmap.fill(Qt::white);
+        image->setPixmap(whitePixmap);
+        break;
+    }
 }
 
 

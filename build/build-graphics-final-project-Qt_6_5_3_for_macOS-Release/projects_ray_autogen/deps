@@ -266,6 +266,8 @@ projects_ray_autogen/timestamp: \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cylinder.h \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.cpp \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.h \
+	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.cpp \
+	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.h \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.cpp \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.h \
 	/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/rgba.h \

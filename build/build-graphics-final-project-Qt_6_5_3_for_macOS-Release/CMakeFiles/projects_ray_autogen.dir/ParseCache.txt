@@ -3,8 +3,8 @@
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/boundingbox.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/raytracer.h
-/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cube.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.h
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cube.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/mainwindow.h
  mmc:Q_OBJECT
  mdp:/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/Availability.h
@@ -687,9 +687,11 @@
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.cpp
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/raytracer.cpp
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/scenefilereader.cpp
-/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/kdtree.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/kdtree.cpp
-/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/raytracescene.cpp
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/kdtree.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/cone.h
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/raytracer/raytracescene.cpp
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.cpp
+/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.h
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/sphere.cpp
 /Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.cpp

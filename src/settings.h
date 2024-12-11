@@ -10,30 +10,17 @@
 
 #include <QObject>
 
-enum ImageType {
-    IMAGE1,
-    IMAGE2,
-    IMAGE3
+enum RenderType {
+    DEPTH,
+    MOTION,
+    LENS
 };
 
 struct Settings {
-    QString currImagePath;
-    bool depth = false;
-    bool motion = false;
-    bool lens = false;
-    bool sandbox = false;
-
-    int currImage = -1;
-
-    // bool image1;
-    // bool image2;
-    // bool image3;
-
-
-    // int shapeParameter1 = 1;
-    // int shapeParameter2 = 1;
-    // float nearPlane = 1;
-    // float farPlane = 1;
+    int renderMode = 0;
+    float aperture = 0;
+    float focalLength = 0;
+    float velocity = 0;
 };
 
 

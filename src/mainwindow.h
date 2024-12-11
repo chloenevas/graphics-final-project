@@ -19,10 +19,13 @@ class MainWindow : public QLabel
 
 public:
     MainWindow();
+    void render();
 
 private:
     void setupCanvas2D();
     QLabel *image;
+    RayTracer *raytracer;
+    QString currScene;
 
     QSlider *depthSlider;
     QSlider *motionSlider;
@@ -42,6 +45,7 @@ private:
 private slots:
     void updateImage(const QString &folder, int value);
     void depthChanged(int newValue);
-    void connectWidgets(QSlider *slider, QSpinBox *box);
+    void motionChanged(int newValue);
+    void onUploadButtonClick();
 };
 #endif // MAINWINDOW_H

@@ -484,6 +484,12 @@
 			null
 		],
 		[
+			"/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.h",
+			"MU",
+			"VSCBVMNR7M/moc_lensfilereader.cpp",
+			null
+		],
+		[
 			"/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lightmodel.h",
 			"MU",
 			"VSCBVMNR7M/moc_lightmodel.cpp",
@@ -650,6 +656,11 @@
 		],
 		[
 			"/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/imagereader.cpp",
+			"MU",
+			null
+		],
+		[
+			"/Users/efratavigdor/Desktop/CS1230/graphics-final-project/src/utils/lensfilereader.cpp",
 			"MU",
 			null
 		],

@@ -1,0 +1,435 @@
+{
+  "name": "root",
+  "globalData": {
+    "ambientCoeff": 0.5,
+    "diffuseCoeff": 0.5,
+    "specularCoeff": 0.5,
+    "transparentCoeff": 0
+  },
+  "cameraData": {
+    "position": [
+      15.0,
+      3.5,
+      5.5
+    ],
+    "up": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "heightAngle": 30.0,
+    "focus": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "aperture": 0.22,
+    "focalLength": 9.78
+  },
+  "groups": [
+    {
+      "translate": [
+        7.0,
+        1.0,
+        3.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            0.3,
+            0.3,
+            0.3
+          ],
+          "direction": [
+            -7.0,
+            -1.0,
+            -3.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "translate": [
+        0.0,
+        5.0,
+        2.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            -1.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "translate": [
+        0.0,
+        5.0,
+        -2.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            1.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "translate": [
+        0.0,
+        5.0,
+        0.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "translate": [
+        -4.0,
+        5.0,
+        0.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            1.0,
+            -1.0,
+            0.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "translate": [
+        4.0,
+        5.0,
+        0.0
+      ],
+      "lights": [
+        {
+          "type": "area",
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "direction": [
+            -1.0,
+            -1.0,
+            0.0
+          ],
+          "width": 2.0,
+          "height": 2.0,
+          "attenuationCoeff": [
+            0.6,
+            0.4,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "groups": [
+        {
+          "translate": [
+            -1.1,
+            -0.9,
+            -0.8
+          ],
+          "scale": [
+            22.0,
+            0.5,
+            12.0
+          ],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.1,
+                0.8,
+                0.8
+              ],
+              "specular": [
+                0.1,
+                0.5,
+                0.5
+              ],
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "textures/court.png",
+              "textureU": 1.0,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+          "translate": [
+            7.0,
+            -0.1,
+            0.0
+          ],
+          "rotate": [
+            0.5,
+            0.73,
+            1,
+            100
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                0.76,
+                0.84,
+                0.52
+              ],
+              "specular": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "shininess": 25,
+              "blend": 1.0,
+              "textureFile": "textures/tennis.jpg",
+              "textureU": 1.0,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+          "translate": [
+            5.0,
+            0.0,
+            0.0
+          ],
+          "rotate": [
+            0.3,
+            1.45,
+            2.0,
+            100
+          ],
+          "scale": [
+            1.3,
+            1.3,
+            1.3
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "specular": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "textures/baseball.jpg",
+              "textureU": 2.0,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+          "translate": [
+            2.0,
+            0.7,
+            0.0
+          ],
+          "rotate": [
+            -0.35,
+            1.4,
+            0,
+            140
+          ],
+          "scale": [
+            2.7,
+            2.7,
+            2.7
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "specular": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "shininess": 20,
+              "blend": 1.0,
+              "textureFile": "textures/volleyball2.jpg",
+              "textureU": 1.0,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+          "translate": [
+            -2.5,
+            1.0,
+            0.0
+          ],
+          "rotate": [
+            1.0,
+            0.8,
+            1.2,
+            20
+          ],
+          "scale": [
+            3.5,
+            3.5,
+            3.5
+          ],
+          "primitives": [
+            {
+              "type": "sphere",
+              "diffuse": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "specular": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "shininess": 15,
+              "blend": 1.0,
+              "textureFile": "textures/soccer.jpg",
+              "textureU": 1.6,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+          "groups": [
+            {
+              "translate": [
+                -8.0,
+                1.5,
+                0.0
+              ],
+              "rotate": [
+                -0.75,
+                4,
+                -3.5,
+                120
+              ],
+              "scale": [
+                4.5,
+                4.5,
+                4.5
+              ],
+              "primitives": [
+                {
+                  "type": "sphere",
+                  "diffuse": [
+                    1.0,
+                    0.55,
+                    0.0
+                  ],
+                  "specular": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "shininess": 15,
+                  "blend": 1.0,
+                  "textureFile": "textures/basketball.jpg",
+                  "textureU": 1.0,
+                  "textureV": 1.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
