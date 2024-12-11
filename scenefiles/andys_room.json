@@ -169,7 +169,11 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/daniel-ritchie.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
@@ -215,7 +219,7 @@
         },
         {
           "translate": [2.5, 0.0, 7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -229,13 +233,17 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/sphere.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
         {
-          "translate": [-2.5, 0.0, 7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "translate": [-3.5, 0.0, 7.9],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -249,7 +257,11 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/teapot.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         }

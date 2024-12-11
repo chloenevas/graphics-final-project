@@ -136,7 +136,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 int samples = 20;
                 for (int s = 0; s < samples; ++s) {
 
-                    // get a randopm time within the shutter open and close - start at t = 0 end at t = 1
+                    // get a random time within the shutter open and close - start at t = 0 end at t = 1
                     float time = (s + static_cast<float>(rand()) / RAND_MAX) / samples;
 
                     color += traceRay(scene, root, eyePoint, d, maxDepth, time);
