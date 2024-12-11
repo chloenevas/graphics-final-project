@@ -1,5 +1,4 @@
 #include "lightmodel.h"
-#include <iostream>
 
 glm::vec4 phong(const RayTraceScene &scene,
            glm::vec3 position,
@@ -10,42 +9,27 @@ glm::vec4 phong(const RayTraceScene &scene,
            glm::vec3 texture) {
     glm::vec4 illumination(0, 0, 0, 1);
     if (light.type == LightType::LIGHT_AREA) {
-        const int numSamples = 16;
+        const int numSamples = 8;
         glm::vec4 totalIllumination(0, 0, 0, 1);
 
-        // Debug the inputs
-        // std::cout << "Light direction vector: " << light.dir.x << ", " << light.dir.y << ", " << light.dir.z << std::endl;
-
-        // Create basis vectors for the light rectangle
         glm::vec3 lightNormal = glm::normalize(glm::vec3(light.dir));
 
-        // Choose a different up vector if light direction is too close to (0,1,0)
         glm::vec3 upVector = (std::abs(glm::dot(lightNormal, glm::vec3(0, 1, 0))) > 0.9f) ?
                                  glm::vec3(1, 0, 0) : glm::vec3(0, 1, 0);
 
-        // Calculate orthogonal vectors for the light surface
         glm::vec3 lightU = glm::normalize(glm::cross(lightNormal, upVector));
         glm::vec3 lightV = glm::normalize(glm::cross(lightU, lightNormal));
 
-        // Debug the basis vectors
-        // std::cout << "Light U: " << lightU.x << ", " << lightU.y << ", " << lightU.z << std::endl;
-        // std::cout << "Light V: " << lightV.x << ", " << lightV.y << ", " << lightV.z << std::endl;
-
         for (int i = 0; i < numSamples; i++) {
-            // Uniform random sampling over the light's area
             float u = light.width * (static_cast<float>(rand()) / RAND_MAX - 0.5f);
             float v = light.height * (static_cast<float>(rand()) / RAND_MAX - 0.5f);
 
-            // Calculate sample position
             glm::vec3 samplePos = glm::vec3(light.pos) + (u * lightU) + (v * lightV);
-
-            // std::cout << "Sample pos " << i << ": " << samplePos.x << ", " << samplePos.y << ", " << samplePos.z << std::endl;
 
             glm::vec3 directionToLight = samplePos - position;
             float distance = glm::length(directionToLight);
             glm::vec3 normalizedDirToLight = glm::normalize(directionToLight);
 
-            // Calculate attenuation
             float sampleAttenuation = 1.0f / (light.function.x +
                                               light.function.y * distance +
                                               light.function.z * distance * distance);

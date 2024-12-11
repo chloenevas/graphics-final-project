@@ -133,7 +133,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
             } else if (m_config.enableMotionBlur) {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                int samples = 20;
+                int samples = 8;
                 for (int s = 0; s < samples; ++s) {
 
                     // get a random time within the shutter open and close - start at t = 0 end at t = 1
@@ -216,7 +216,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
         for (const SceneLightData &light : scene.getLights()) {
             if (light.type == LightType::LIGHT_AREA) {
                 // Sample multiple points on the area light for soft shadows
-                const int shadowSamples = 16; // Can be adjusted
+                const int shadowSamples = 8; // Can be adjusted
                 float shadowFactor = 0.0f;
 
                 glm::vec3 lightNormal = glm::normalize(glm::vec3(light.dir));

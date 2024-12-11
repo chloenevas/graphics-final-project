@@ -67,13 +67,12 @@ void traverseSceneGraph(SceneNode* node, glm::mat4 parentCTM, std::vector<Render
             break;
 
         case LightType::LIGHT_AREA:
-            std::cout << "Hello, World!" << std::endl;
             lightData.pos = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-            lightData.pos = currentCTM * lightData.pos;  // Transform the position
+            lightData.pos = currentCTM * lightData.pos;
             lightData.dir = light->dir;
-            lightData.dir = glm::normalize(currentCTM * lightData.dir);  // Transform the direction
+            lightData.dir = glm::normalize(currentCTM * lightData.dir);
             lightData.width = light->width;
-            lightData.height = light->height;  // Keep original width/height
+            lightData.height = light->height;
             lightData.function = light->function;
             break;
 

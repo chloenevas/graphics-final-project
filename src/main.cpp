@@ -18,8 +18,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-     std::cout << "Argument count (argc): " << argc << std::endl;
-
     if (argc == 1) {
         QCoreApplication::setApplicationName("Spirit Sliders");
         QCoreApplication::setOrganizationName("CS 1230");
