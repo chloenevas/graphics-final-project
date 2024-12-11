@@ -33,13 +33,14 @@ enum class TransformationType {
 // Type which can be used to store an RGBA color in floats [0,1]
 using SceneColor = glm::vec4;
 
-// Struct which contains the global color coefficients of a scene.
+// Struct which contains the global color coefficients of a scene. It also contains the global velocity
 // These are multiplied with the object-specific materials in the lighting equation.
 struct SceneGlobalData {
     float ka; // Ambient term
     float kd; // Diffuse term
     float ks; // Specular term
     float kt; // Transparency; used for extra credit (refraction)
+    float globalVel; // velocity for all primitives
 };
 
 // Struct which contains raw parsed data fro a single light

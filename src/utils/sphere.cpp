@@ -19,10 +19,10 @@ glm::vec3 Sphere::calcNormal(const glm::vec3 point) {
 }
 
 // Method to calculate the intersection with a ray
-bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t, float time) {
+bool Sphere::calcIntersection(const glm::vec3 rayOrigin, const glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& t, float time, float vel) {
 
     glm::vec3 centerWorld = glm::vec3(m_ctm * glm::vec4(m_center, 1.0f));
-    glm::vec3 movingCenter = centerWorld - time * m_velocity * glm::vec3(0, 0.1, 0);
+    glm::vec3 movingCenter = centerWorld - time * m_velocity * glm::vec3(0, vel, 0);
 
     glm::vec3 rayToPoint = rayOrigin - movingCenter;
     glm::vec3 P = glm::vec3(m_inverseCTM * glm::vec4(rayToPoint, 0.0f));

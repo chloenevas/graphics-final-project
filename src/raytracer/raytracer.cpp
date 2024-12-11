@@ -184,14 +184,15 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
     glm::vec3 closestIntersection;
     Shape* closestShape = nullptr;
 
+    float velocity = scene.getGlobalData().globalVel;
+
     std::vector<Shape*> shapes = kdTree.query(eyePoint, d, root);
 
     for (const auto shape : shapes) {
         float t;
         glm::vec3 intersectionPoint;
 
-
-        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time)) {
+        if (shape->calcIntersection(eyePoint, d, intersectionPoint, t, time, velocity)) {
             float worldT = glm::length(intersectionPoint - eyePoint);
 
             if (worldT < closestT) {
@@ -242,7 +243,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                         glm::vec3 shadowIntersection;
 
                         if (shadowShape->calcIntersection(offsetIntersection, shadowDir,
-                                                          shadowIntersection, shadowT, 0)) {
+                                                          shadowIntersection, shadowT, 0, velocity)) {
                             float shadowDist = glm::length(shadowIntersection - offsetIntersection);
                             if (shadowDist < maxDist) {
                                 sampleInShadow = true;
@@ -283,7 +284,7 @@ glm::vec4 RayTracer::traceRay(const RayTraceScene &scene, KdTree::KdNode* root, 
                     glm::vec3 shadowIntersection;
 
                     // calculate shadows based on the shape's position at time = 0
-                    if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0)) {
+                    if (shadowShape->calcIntersection(offsetIntersection, lightDirection, shadowIntersection, shadowT, 0, velocity)) {
                         float shadowDistance = glm::length(shadowIntersection - offsetIntersection);
 
                         if (shadowDistance < maxDistance || light.type == LightType::LIGHT_DIRECTIONAL) {
@@ -371,7 +372,7 @@ bool RayTracer::traceRayThroughLens(const glm::vec3 eyePoint, const glm::vec3 d,
             Sphere sphere = Sphere(translation, SceneMaterial{}, glm::vec3(0.0), nullptr);
             sphere.setIsLens(true);
             sphere.setRadius(r);
-            if (!sphere.calcIntersection(eyePointLens, dLens, intersectionPoint, t, 0.0)) {
+            if (!sphere.calcIntersection(eyePointLens, dLens, intersectionPoint, t, 0.0, 0.0)) {
                 return false;
             } else {
                 n = sphere.calcNormal(intersectionPoint);

@@ -149,7 +149,7 @@ bool ScenefileReader::readJSON() {
  */
 bool ScenefileReader::parseGlobalData(const QJsonObject &globalData) {
     QStringList requiredFields = {"ambientCoeff", "diffuseCoeff", "specularCoeff"};
-    QStringList optionalFields = {"transparentCoeff"};
+    QStringList optionalFields = {"transparentCoeff", "globalVel"};
     QStringList allFields = requiredFields + optionalFields;
     for (auto field : globalData.keys()) {
         if (!allFields.contains(field)) {
@@ -192,6 +192,15 @@ bool ScenefileReader::parseGlobalData(const QJsonObject &globalData) {
         }
         else {
             std::cout << "globalData transparentCoeff must be a floating-point value" << std::endl;
+            return false;
+        }
+    }
+    if (globalData.contains("globalVel")) {
+        if (globalData["globalVel"].isDouble()) {
+            m_globalData.globalVel = globalData["globalVel"].toDouble();
+        }
+        else {
+            std::cout << "globalData velocity must be a floating-point value" << std::endl;
             return false;
         }
     }
