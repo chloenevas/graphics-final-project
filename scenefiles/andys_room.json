@@ -8,8 +8,8 @@
   },
   "cameraData": {
     "position": [
-      16.0,
-      2.0,
+      20.0,
+      0.0,
       3.0
     ],
     "up": [
@@ -17,7 +17,7 @@
       1.0,
       0.0
     ],
-    "heightAngle": 45.0,
+    "heightAngle": 40.0,
     "focus": [
       0.0,
       0.0,
@@ -145,7 +145,11 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/framed_andy.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
@@ -165,13 +169,17 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/daniel-ritchie.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
         {
           "translate": [2.5, 0.0, -7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -185,13 +193,17 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/recursion.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
         {
-          "translate": [-2.5, 0.0, -7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "translate": [-3.5, 0.0, -7.9],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -205,13 +217,17 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/us.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
         {
           "translate": [2.5, 0.0, 7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -225,13 +241,141 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/sphere.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         },
         {
-          "translate": [-2.5, 0.0, 7.9],
-          "scale": [2.5, 3.5, 0.5],
+          "translate": [1.0, -2.0, 0.0],
+          "scale": [3.0, 0.5, 5.5],
+          "primitives": [
+            {
+              "type": "cube",
+              "diffuse": [
+                0.4,
+                0.2,
+                0.0
+              ],
+              "specular": [
+                0.3,
+                0.3,
+                0.3
+              ],
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/bark.png",
+              "textureU": 1.0,
+              "textureV": 1.0
+            }
+          ]
+        },
+        {
+        "translate": [2.25, -5.25, 2.5],
+        "scale": [0.5, 6.0, 0.5],
+        "rotate": [45.0, 0.0, 1.0, 0.0],
+        "primitives": [
+          {
+            "type": "cylinder",
+            "diffuse": [
+              0.4,
+              0.2,
+              0.0
+            ],
+            "specular": [
+              0.3,
+              0.3,
+              0.3
+            ],
+            "shininess": 10,
+            "blend": 1.0,
+            "textureFile": "scenefiles/textures/bark.png",
+            "textureU": 1.0,
+            "textureV": 1.0
+          }
+        ]
+      },
+        {
+        "translate": [2.25, -5.25, -2.5],
+        "scale": [0.5, 6.0, 0.5],
+        "rotate": [45.0, 0.0, 1.0, 0.0],
+        "primitives": [
+          {
+            "type": "cylinder",
+            "diffuse": [
+              0.4,
+              0.2,
+              0.0
+            ],
+            "specular": [
+              0.3,
+              0.3,
+              0.3
+            ],
+            "shininess": 10,
+            "blend": 1.0,
+            "textureFile": "scenefiles/textures/bark.png",
+            "textureU": 1.0,
+            "textureV": 1.0
+          }
+        ]
+      },
+        {
+        "translate": [-0.25, -5.25, 2.5],
+        "scale": [0.5, 6.0, 0.5],
+        "rotate": [45.0, 0.0, 1.0, 0.0],
+        "primitives": [
+          {
+            "type": "cylinder",
+            "diffuse": [
+              0.4,
+              0.2,
+              0.0
+            ],
+            "specular": [
+              0.3,
+              0.3,
+              0.3
+            ],
+            "shininess": 10,
+            "blend": 1.0,
+            "textureFile": "scenefiles/textures/bark.png",
+            "textureU": 1.0,
+            "textureV": 1.0
+          }
+        ]
+      },
+        {
+        "translate": [-0.25, -5.25, -2.5],
+        "scale": [0.5, 6.0, 0.5],
+        "rotate": [45.0, 0.0, 1.0, 0.0],
+        "primitives": [
+          {
+            "type": "cylinder",
+            "diffuse": [
+              0.4,
+              0.2,
+              0.0
+            ],
+            "specular": [
+              0.3,
+              0.3,
+              0.3
+            ],
+            "shininess": 10,
+            "blend": 1.0,
+            "textureFile": "scenefiles/textures/bark.png",
+            "textureU": 1.0,
+            "textureV": 1.0
+          }
+        ]
+      },
+        {
+          "translate": [-3.5, 0.0, 7.9],
+          "scale": [3.5, 2.5, 0.5],
           "primitives": [
             {
               "type": "cube",
@@ -245,7 +389,11 @@
                 0.3,
                 0.3
               ],
-              "shininess": 10
+              "shininess": 10,
+              "blend": 1.0,
+              "textureFile": "scenefiles/textures/teapot.png",
+              "textureU": 1.0,
+              "textureV": 1.0
             }
           ]
         }
@@ -254,8 +402,8 @@
     {
       "groups": [
         {
-          "translate": [0.0, 4.0, 0.0], 
-          "scale": [0.2, 0.2, 0.2], 
+          "translate": [0.0, 4.0, 0.0],
+          "scale": [0.2, 0.2, 0.2],
           "lights": [
             {
               "type": "point",
@@ -265,8 +413,8 @@
           ]
         },
         {
-          "translate": [-3.0, 4.0, 3.0], 
-          "scale": [0.2, 0.2, 0.2], 
+          "translate": [-3.0, 4.0, 3.0],
+          "scale": [0.2, 0.2, 0.2],
           "lights": [
             {
               "type": "point",
@@ -276,35 +424,46 @@
           ]
         },
         {
-          "translate": [3.0, 4.0, 3.0], 
-          "scale": [0.4, 0.4, 0.4], 
+          "translate": [3.0, 4.0, 3.0],
+          "scale": [0.4, 0.4, 0.4],
           "lights": [
             {
               "type": "point",
               "color": [1.0, 1.0, 1.0],
-              "attenuationCoeff": [0.6, 0.4, 0.0] 
+              "attenuationCoeff": [0.6, 0.4, 0.0]
             }
           ]
         },
         {
-          "translate": [3.0, 4.0, -3.0], 
-          "scale": [0.4, 0.4, 0.4], 
+          "translate": [3.0, 4.0, -3.0],
+          "scale": [0.4, 0.4, 0.4],
           "lights": [
             {
               "type": "point",
               "color": [1.0, 1.0, 1.0],
-              "attenuationCoeff": [0.6, 0.4, 0.0] 
+              "attenuationCoeff": [0.6, 0.4, 0.0]
             }
           ]
         },
         {
-          "translate": [-3.0, 4.0, -3.0], 
-          "scale": [0.4, 0.4, 0.4], 
+          "translate": [-3.0, 4.0, -3.0],
+          "scale": [0.4, 0.4, 0.4],
           "lights": [
             {
               "type": "point",
               "color": [1.0, 1.0, 1.0],
-              "attenuationCoeff": [0.6, 0.4, 0.0] 
+              "attenuationCoeff": [0.6, 0.4, 0.0]
+            }
+          ]
+        },
+        {
+          "translate": [10.0, 0.0, 0.0],
+          "scale": [0.4, 0.4, 0.4],
+          "lights": [
+            {
+              "type": "point",
+              "color": [1.0, 1.0, 1.0],
+              "attenuationCoeff": [0.6, 0.4, 0.0]
             }
           ]
         }
