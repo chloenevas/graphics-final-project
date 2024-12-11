@@ -133,7 +133,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
             } else if (m_config.enableMotionBlur) {
                 glm::vec3 d = glm::normalize(camera.getInverseViewMatrix() *
                                                  glm::vec4(scene.getPoint(r, c, camera), 1.0f) - glm::vec4(eyePoint, 1.0f));
-                int samples = 8;
+                int samples = 30;
                 for (int s = 0; s < samples; ++s) {
 
                     // get a random time within the shutter open and close - start at t = 0 end at t = 1

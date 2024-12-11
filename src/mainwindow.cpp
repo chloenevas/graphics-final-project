@@ -138,13 +138,13 @@ MainWindow::MainWindow()
     motionSlider = new QSlider(Qt::Horizontal);
     motionSlider->setTickInterval(1);
     motionSlider->setMinimum(0);
-    motionSlider->setMaximum(20);
+    motionSlider->setMaximum(100);
     motionSlider->setValue(0);
     motionLayout->addWidget(motionSlider);
 
     motionBox = new QSpinBox();
     motionBox->setMinimum(0);
-    motionBox->setMaximum(20);
+    motionBox->setMaximum(100);
     motionBox->setSingleStep(1);
     motionBox->setValue(0);
 
@@ -292,6 +292,7 @@ void MainWindow::render(){
     }
 
     // add lens adjustments here
+
 
 
     if (!success) {
