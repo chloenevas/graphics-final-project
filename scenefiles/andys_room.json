@@ -4,7 +4,8 @@
     "ambientCoeff": 0.3,
     "diffuseCoeff": 0.6,
     "specularCoeff": 0.4,
-    "transparentCoeff": 0
+    "transparentCoeff": 0,
+    "globalVel": 0
   },
   "cameraData": {
     "position": [

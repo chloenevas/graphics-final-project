@@ -78,8 +78,6 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
     int imageWidth = scene.width();
     int imageHeight = scene.height();
 
-    bool lens = (scene.getLensInterfaces().size() != 0);
-
     for (int r = 0; r < imageHeight; r ++) {
         for (int c = 0; c < imageWidth; c ++) {
             glm::vec4 color(0,0,0,255);
@@ -144,7 +142,7 @@ void RayTracer::render(RGBA *imageData, const RayTraceScene &scene) {
                 color /= static_cast<float>(samples);
 
                 color = glm::clamp(color, 0.0f, 1.0f);
-            } else if (lens) {
+            } else if (m_config.enableLens) {
                 glm::vec3 d = glm::normalize(scene.getPoint(r, c, camera));
                 glm::vec3 eyePointLens;
                 glm::vec3 dLens;

@@ -26,6 +26,7 @@ private:
     QLabel *image;
     RayTracer *raytracer;
     QString currScene;
+    QString currLens;
 
     QSlider *depthSlider;
     QSlider *motionSlider;

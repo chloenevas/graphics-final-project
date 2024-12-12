@@ -34,9 +34,6 @@ MainWindow::MainWindow()
 {
     setWindowTitle("Spirit Sliders: Graphics Final Project");
 
-    // loads in settings from last run or uses default values
-    // settings.loadSettingsOrDefaults();
-
     QHBoxLayout *hLayout = new QHBoxLayout(); // horizontal layout for canvas and controls panel
     QVBoxLayout *vLayout = new QVBoxLayout(); // vertical layout for control panel
 
@@ -45,8 +42,7 @@ MainWindow::MainWindow()
     hLayout->addLayout(vLayout);
     setLayout(hLayout);
 
-    // setupCanvas2D();
-    resize(2000, 2000);
+    resize(1475, 810);
 
     // makes the canvas into a scroll area
     QScrollArea *scrollArea = new QScrollArea();
@@ -208,11 +204,10 @@ MainWindow::MainWindow()
     QWidget *depthSettingsWidget = new QWidget();
     QVBoxLayout *depthSettingsLayout = new QVBoxLayout(depthSettingsWidget);
 
-    addLabel(depthSettingsLayout, "Depth of Field Settings:");
-    addDoubleSpinBox(depthSettingsLayout, "Aperture:", 0.1, 10.0, 0.1, settings.aperture, 2, [this](double value) {
+    addDoubleSpinBox(depthSettingsLayout, "Aperture:", 0.0, 10.0, 0.1, settings.aperture, 2, [this](double value) {
         settings.aperture = value;
     });
-    addDoubleSpinBox(depthSettingsLayout, "Focal Length:", 10.0, 200.0, 1.0, settings.focalLength, 1, [this](double value) {
+    addDoubleSpinBox(depthSettingsLayout, "Focal Length:", 0.0, 200.0, 1.0, settings.focalLength, 1, [this](double value) {
         settings.focalLength = value;
     });
 
@@ -220,30 +215,30 @@ MainWindow::MainWindow()
     QWidget *motionSettingsWidget = new QWidget();
     QVBoxLayout *motionSettingsLayout = new QVBoxLayout(motionSettingsWidget);
 
-    addLabel(motionSettingsLayout, "Motion Settings:");
-    addDoubleSpinBox(motionSettingsLayout, "Motion Blur Intensity:", 0.0, 1.0, 0.1, settings.velocity, 2, [this](double value) {
+    addDoubleSpinBox(motionSettingsLayout, "Velocity Factor:", 0.0, 1.0, 0.1, settings.velocity, 2, [this](double value) {
         settings.velocity = value;
     });
-    // addDoubleSpinBox(motionSettingsLayout, "Shutter Speed:", 0.1, 2.0, 0.1, settings.shutterSpeed, 2, [this](double value) {
-    //     settings.shutterSpeed = value;
-    // });
 
     // Lens Panel
     QWidget *lensSettingsWidget = new QWidget();
-    QVBoxLayout *lensSettingsLayout = new QVBoxLayout(lensSettingsWidget);
+    QHBoxLayout *lensSettingsLayout = new QHBoxLayout(lensSettingsWidget);
 
-    addLabel(lensSettingsLayout, "Lens Settings:");
-    // addDoubleSpinBox(lensSettingsLayout, "Lens Distortion:", 0.0, 1.0, 0.1, settings.lensDistortion, 2, [this](double value) {
-    //     settings.lensDistortion = value;
-    // });
-    // addDoubleSpinBox(lensSettingsLayout, "Lens Focal Distance:", 10.0, 200.0, 1.0, settings.lensFocalDistance, 1, [this](double value) {
-    //     settings.lensFocalDistance = value;
-    // });
+    QGroupBox *imageBox3 = new QGroupBox();
+    QHBoxLayout *imageLay3 = new QHBoxLayout();
 
-    // Add widgets to the stack pane
-    panelStack->addWidget(depthSettingsWidget);  // Panel 0: Depth of Field
-    panelStack->addWidget(motionSettingsWidget); // Panel 1: Motion
-    panelStack->addWidget(lensSettingsWidget);   // Panel 2: Lens
+    addRadioButton(imageLay3, "Fish Eye", false, [this]{
+        currLens = "/Users/efratavigdor/Desktop/CS1230/graphics-final-project/lenses/fisheye.dat";
+    });
+    addRadioButton(imageLay3, "Wide", false, [this]{
+        currLens = "/Users/efratavigdor/Desktop/CS1230/graphics-final-project/lenses/wide.dat";
+    });
+
+    imageBox3->setLayout(imageLay3);
+    lensSettingsLayout->addWidget(imageBox3);
+
+    panelStack->addWidget(depthSettingsWidget);
+    panelStack->addWidget(motionSettingsWidget);
+    panelStack->addWidget(lensSettingsWidget);
 
     connect(depthButton, &QRadioButton::clicked, this, [panelStack]() {
         settings.renderMode = DEPTH;
@@ -251,11 +246,11 @@ MainWindow::MainWindow()
     });
     connect(motionButton, &QRadioButton::clicked, this, [panelStack]() {
         settings.renderMode = MOTION;
-        panelStack->setCurrentIndex(MOTION); // Assuming DEPTH corresponds to the correct index
+        panelStack->setCurrentIndex(MOTION);
     });
     connect(lensButton, &QRadioButton::clicked, this, [panelStack]() {
         settings.renderMode = LENS;
-        panelStack->setCurrentIndex(LENS); // Assuming DEPTH corresponds to the correct index
+        panelStack->setCurrentIndex(LENS);
     });
 
 
@@ -263,73 +258,46 @@ MainWindow::MainWindow()
 }
 
 void MainWindow::render(){
-    // QApplication a(argc, argv);
-
-    // QCommandLineParser parser;
-    // parser.addHelpOption();
-    // parser.addPositionalArgument("config", "Path of the config file.");
-    // // parser.process(a);
-
-    // auto positionalArgs = parser.positionalArguments();
-    // if (positionalArgs.size() != 1) {
-    //     std::cerr << "Not enough arguments. Please provide a path to a config file (.ini) as a command-line argument." << std::endl;
-    //     a.exit(1);
-    // }
-
-    // QSettings settings( positionalArgs[0], QSettings::IniFormat );
-
     RenderData metaData;
     bool success = SceneParser::parseScene(currScene.toStdString(), metaData);
 
+    std::cout << currLens.toStdString() << std::endl;
+    bool success2 = SceneParser::parseLens(currLens.toStdString(), metaData);
 
-    // have condition
-    metaData.cameraData.aperture = settings.aperture;
-    metaData.cameraData.focalLength = settings.focalLength;
-
-    // have condition
-    for (auto &shape : metaData.shapes) {
-        shape.primitive.velocity += settings.velocity; // Increase each shape's velocity by 4
+    if (settings.renderMode == DEPTH){
+        metaData.cameraData.aperture = settings.aperture;
+        metaData.cameraData.focalLength = settings.focalLength;
     }
 
-    // add lens adjustments here
-
-
-
-    if (!success) {
-        std::cerr << "Error loading scene: \"" << currScene.toStdString() << "\"" << std::endl;
-        // a.exit(1);
+    if (settings.renderMode == MOTION){
+        metaData.globalData.globalVel = settings.velocity;
     }
+
+    // if (!success) {
+    //     std::cerr << "Error loading scene: \"" << currScene.toStdString() << "\"" << std::endl;
+    // }
+
+    // if (!success2) {
+    //     std::cerr << "Error loading scene: \"" << currScene.toStdString() << "\"" << std::endl;
+    // }
 
     int width = 1024;
     int height = 768;
 
-    // Extracting data pointer from Qt's image API
     QImage myImage = QImage(width, height, QImage::Format_RGBX8888);
     myImage.fill(Qt::black);
     RGBA *data = reinterpret_cast<RGBA *>(myImage.bits());
 
-    // Setting up the raytracer
     RayTracer::Config rtConfig{};
-    // rtConfig.enableShadow        = false;
-    // rtConfig.enableReflection    = false;
-    // rtConfig.enableRefraction    = false;
-    // rtConfig.enableTextureMap    = false;
-    // rtConfig.enableTextureFilter = false;
-    // rtConfig.enableParallelism   = false;
-    // rtConfig.enableSuperSample   = false;
-    // rtConfig.enableAcceleration  = false;
-    // rtConfig.maxRecursiveDepth   = false;
-    // rtConfig.onlyRenderNormals   = false;
 
     rtConfig.enableDepthOfField = settings.renderMode == DEPTH ? true : false;
     rtConfig.enableMotionBlur = settings.renderMode == MOTION ? true : false;
+    rtConfig.enableLens = settings.renderMode == LENS ? true : false;
 
     RayTracer raytracer{ rtConfig };
 
     RayTraceScene rtScene{ width, height, metaData };
 
-    // Note that we're passing `data` as a pointer (to its first element)
-    // Recall from Lab 1 that you can access its elements like this: `data[i]`
     raytracer.render(data, rtScene);
 
     image->setPixmap(QPixmap::fromImage(myImage));

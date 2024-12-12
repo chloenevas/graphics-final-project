@@ -99,7 +99,7 @@
                 ],
                 "shininess": 0,
                 "blend": 1.0,
-                "textureFile": "textures/sunset.jpg",
+                "textureFile": "scenefiles/textures/sunset.jpg",
                 "textureU": 1.0,
                 "textureV": 1.0,
                 "velocity": [
@@ -140,7 +140,7 @@
                 ],
                 "shininess": 0,
                 "blend": 0.5,
-                "textureFile": "textures/field.jpg",
+                "textureFile": "scenefiles/textures/field.jpg",
                 "textureU": 1.0,
                 "textureV": 1.0,
                 "velocity": [
@@ -184,7 +184,7 @@
               ],
               "shininess": 15,
               "blend": 1.0,
-              "textureFile": "textures/basketball.jpg",
+              "textureFile": "scenefiles/textures/basketball.jpg",
               "textureU": 1.0,
               "textureV": 1.0,
               "velocity": [
@@ -227,7 +227,7 @@
               ],
               "shininess": 20,
               "blend": 1.0,
-              "textureFile": "textures/volleyball2.jpg",
+              "textureFile": "scenefiles/textures/volleyball2.jpg",
               "textureU": 1.0,
               "textureV": 1.0,
               "velocity": [
@@ -270,7 +270,7 @@
               ],
               "shininess": 25,
               "blend": 1.0,
-              "textureFile": "textures/tennis.jpg",
+              "textureFile": "scenefiles/textures/tennis.jpg",
               "textureU": 1.0,
               "textureV": 1.0,
               "velocity": [
@@ -313,7 +313,7 @@
               ],
               "shininess": 10,
               "blend": 1.0,
-              "textureFile": "textures/baseball.jpg",
+              "textureFile": "scenefiles/textures/baseball.jpg",
               "textureU": 2.0,
               "textureV": 1.0,
               "velocity": [
@@ -356,7 +356,7 @@
               ],
               "shininess": 15,
               "blend": 1.0,
-              "textureFile": "textures/soccer.jpg",
+              "textureFile": "scenefiles/textures/soccer.jpg",
               "textureU": 1.6,
               "textureV": 1.0,
               "velocity": [

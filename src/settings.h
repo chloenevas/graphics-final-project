@@ -21,6 +21,7 @@ struct Settings {
     float aperture = 0;
     float focalLength = 0;
     float velocity = 0;
+
 };
 
 
